@@ -1,6 +1,6 @@
 ### IdeaV
 
-The project implements the Quintet data model approach: you store your data as a list of indexed and linked values.
+The project implements the Quintet data model approach: it stores your data as a list of indexed and linked values (and you never need to know it).
 
 The application consists of the following parts:
  - the core - a PHP-script
