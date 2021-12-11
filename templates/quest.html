@@ -1,0 +1,1163 @@
+<style>
+    .table th, .table td { border-top: none !important; }
+    .table > tbody > tr > td { vertical-align: middle; }
+    .scut { border-bottom: 1px dotted; cursor: pointer; color: #548eaa; }
+    a { cursor: pointer; }
+</style>
+<div id="frame">
+<div id="content">
+</div>
+<div style="display:none"><!--Steps-->
+<div id="0">
+    <h3>Постановка задачи</h3>
+    <div class="alert alert-light" style="background-color:#f3f3f3; border-color:#efefef;">
+    Чтобы вам было проще пройти это обучение, рекомендую на&nbsp;каждом шаге сначала прочитать весь текст, а&nbsp;затем выполнять указанные в&nbsp;нем действия.
+    </div>
+    <p>Посмотрим на&nbsp;такой вполне реальный случай: у&nbsp;вас есть какие-то дела, про которые нужно не&nbsp;забыть, и&nbsp;вы&nbsp;хотите видеть&nbsp;те, что актуальны прямо сейчас.</p>
+    <p><img style="margin-left:50px" src="/i/tasks.png"></p>
+    <p>Мы&nbsp;будем вести список задач, а&nbsp;каждая задача будет иметь несколько свойств: дата начала, срок исполнения, состояние (новая, выполнена, отменена), примечание, приложение в&nbsp;виде файла и&nbsp;т.д.</p>
+    <p>Вы&nbsp;можете пройти этот быстрый курс обучения несколько раз, возвращаясь к&nbsp;предыдущим шагам и&nbsp;пропуская&nbsp;то, что вы&nbsp;уже выполнили. Единственное условие успеха: вам нужно создать все предлагаемые объекты как есть, благо мы&nbsp;вам помогаем нажимать минимум кнопок для этого.</p>
+    <p><b>Нажмите <a href="#" onclick="next()">Далее</a> для продолжения.</b></p>
+</div>
+<div id="1">
+    <h3>Обучаем Интеграл нашим терминам</h3>
+    <div id="ready1" style="display:none">
+    <div class="alert alert-success">
+    <a href="#" onclick="next()">Вы&nbsp;уже сделали это ранее. Нажмите это сообщение, чтобы продолжить, или можете создать другой тип.</a>
+    </div>
+    </div>
+    <p>Сначала мы создадим структуру данных для наших задач, примерно такую:</p>
+    <img class="img-fluid" src="/i/sc.png">
+    <br /><br />
+    <p>Создайте объект &laquo;Задача&raquo;, воспользовавшись этой формой (такую же вы найдете в меню Типы):</p>
+    <p>(для экономии вашего времени я&nbsp;вбил в&nbsp;форму слово Задача за&nbsp;вас)</p>
+    <form class="form" style="margin:5px;" method="post" action="/{_global_.z}/_d_new/" onsubmit="if(byId('val1').value==''){alert('Введите название типа!'); event.returnValue=false; event.preventDefault();}else addbtn.disabled=true;">
+    <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+    <input type="hidden" name="next_act" value="quest/2&">
+    <table>
+    	<tr>
+    		<td><input type="text" id="val1" name="val" placeholder="Новый Тип" maxlength="127" class="form-control" value="Задача"></td>
+    		<td><div id="sel_types"><select name="t" class="form-control"><option value="3">SHORT</option><option value="8">CHARS</option><option value="9">DATE</option><option value="13">NUMBER</option><option value="14">SIGNED</option><option value="11">BOOLEAN</option><option value="12">MEMO</option><option value="4">DATETIME</option><option value="10">FILE</option><option value="2">HTML</option></select></div></td>
+    		<td><input type="submit" name="addbtn" class="btn btn-primary" value="Создать Тип"></td>
+    	</tr>
+    </table>
+    </form>
+    <br />
+    <p>Кроме названия типа следует также указать его базовый тип:</p>
+    <ul>
+    <li>SHORT&nbsp;&mdash; Короткая строка (до&nbsp;127&nbsp;символов)</li>
+    <li>CHARS&nbsp;&mdash; Cтрока неограниченной длины</li>
+    <li>DATE&nbsp;&mdash; Дата (число, месяц и&nbsp;год)</li>
+    <li>NUMBER&nbsp;&mdash; Целое число</li>
+    <li>... и&nbsp;так далее.</li>
+    </ul>
+    <p>Всего есть около дюжины базовых типов, как в&nbsp;любом языке программирования или, например, в&nbsp;знакомом вам MS&nbsp;Excel. В&nbsp;данном случае мы&nbsp;выбрали тип SHORT, потому что рассчитываем, что наши задачи будут формулироваться кратко, в&nbsp;пару строк.</p>
+    <p><b>Итак, всё готово, нажмите кнопку &laquo;Создать тип&raquo;.</b></p>
+</div>
+<div id="2">
+    <h3>Обучаем Интеграл нашим терминам</h3>
+    <div id="ready2" style="display:none">
+    <div class="alert alert-success">
+    <a href="#" onclick="next()">Вы&nbsp;уже сделали это ранее. Нажмите это сообщение, чтобы продолжить.</a>
+    </div>
+    </div>
+    <p>Вы&nbsp;создали новый тип <b id="mytype"></b> и&nbsp;можете увидеть его в&nbsp;меню Типы. Теперь аналогично создадим ещё несколько типов, требующихся для задания свойств нашего типа: Срок, Состояние, Файл и&nbsp;другие.</p>
+    <p>Для Срока мы&nbsp;выберем тип DATE:</p>
+    <form class="form" style="margin:5px;" method="post" action="/{_global_.z}/_d_new/" onsubmit="if(byId('val2').value==''){alert('Введите название типа!'); event.returnValue=false; event.preventDefault();}else addbtn.disabled=true;">
+    <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+    <input type="hidden" name="next_act" value="quest/3&">
+    <table>
+    	<tr>
+    		<td><input type="text" id="val2" name="val" placeholder="Новый Тип" maxlength="127" class="form-control" value="Срок"></td>
+    		<td><div id="sel_types"><select name="t" class="form-control"><option value="3">SHORT</option><option value="8">CHARS</option><option value="9" SELECTED>DATE</option><option value="13">NUMBER</option><option value="14">SIGNED</option><option value="11">BOOLEAN</option><option value="12">MEMO</option><option value="4">DATETIME</option><option value="10">FILE</option><option value="2">HTML</option></select></div></td>
+    		<td><input type="submit" name="addbtn" class="btn btn-primary" value="Создать Тип"></td>
+    	</tr>
+    </table>
+    </form>
+    <br />
+    <p>Обратите внимание, что мы&nbsp;не&nbsp;создаем типы Дата и&nbsp;Примечание, потому что такие типы уже есть в&nbsp;Интеграле. Вот они: <span class="scut" onclick="byId('date2').style.display='block'">Дата</span>, <span class="scut" onclick="byId('memo2').style.display='block'">Примечание</span> (так они выглядят в меню Типы).</p>
+    <table id="date2" style="display:none;">
+        <tr>
+        <td width="33px">&nbsp;</td>
+        <td valign="top">
+        <div class="panel panel-default">
+        <div class="panel-heading">
+        <a style="display:inline;">Дата</a>
+        </div>
+        </div>
+        </td>
+        </tr>
+    </table>
+    <table id="memo2" style="display:none;">
+        <tr>
+        <td width="33px">&nbsp;</td>
+        <td valign="top">
+        <div class="panel panel-default">
+        <div class="panel-heading">
+        <a style="display:inline;">Примечание</a>
+        </div>
+        </div>
+        </td>
+        </tr>
+    </table>
+    <p><b>Посмотрите ещё раз внимательно на&nbsp;форму и&nbsp;нажмите кнопку &laquo;Создать тип&raquo;.</b></p>
+    <p id="ready2" style="display:none"><a href="#" onclick="next()">Я&nbsp;уже сделал это ранее&nbsp;&mdash; идём дальше</a></p>
+</div>
+<div id="3">
+    <h3>Создаем тип Файл с&nbsp;базовым типом FILE</h3>
+    <div id="ready3" style="display:none">
+    <div class="alert alert-success">
+    <a href="#" onclick="next()">Вы&nbsp;уже сделали это ранее. Нажмите это сообщение, чтобы продолжить.</a>
+    </div>
+    </div>
+    <p>Для реквизита в&nbsp;виде прилагаемого файла, который мы&nbsp;так и&nbsp;назовем Файл, выберем тип FILE:</p>
+    <form class="form" style="margin:5px;" method="post" action="/{_global_.z}/_d_new/" onsubmit="if(byId('val3').value==''){alert('Введите название типа!'); event.returnValue=false; event.preventDefault();}else addbtn.disabled=true;">
+    <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+    <input type="hidden" name="next_act" value="quest/4&">
+    <table>
+    	<tr>
+    		<td><input type="text" id="val3" name="val" placeholder="Новый Тип" maxlength="127" class="form-control" value="Файл"></td>
+    		<td><div id="sel_types"><select name="t" class="form-control"><option value="3">SHORT</option><option value="8">CHARS</option><option value="9">DATE</option><option value="13">NUMBER</option><option value="14">SIGNED</option><option value="11">BOOLEAN</option><option value="12">MEMO</option><option value="4">DATETIME</option><option value="10" SELECTED>FILE</option><option value="2">HTML</option></select></div></td>
+    		<td><input type="submit" name="addbtn" class="btn btn-primary" value="Создать Тип"></td>
+    	</tr>
+    </table>
+    </form>
+    <br />
+    <p>Файл можно будет выводить в&nbsp;виде ссылки на&nbsp;скачивание или картинкой, если он&nbsp;является графическим файлом.</p>
+</div>
+<div id="4">
+    <h3>Создаем справочник: список состояний задачи</h3>
+    <div id="ready4" style="display:none">
+    <div class="alert alert-success">
+    <a href="#" onclick="next()">Вы&nbsp;уже сделали это ранее. Нажмите это сообщение, чтобы продолжить.</a>
+    </div>
+    </div>
+    <p>Следующий реквизит посложнее: мы&nbsp;хотим выбирать Состояние задачи из&nbsp;списка, а&nbsp;не&nbsp;вбивать каждый раз текст.</p>
+    <h3>Диаграмма состояний задачи</h3>
+    <img class="img-fluid" src="/i/statuses.png">
+    <br /><br />
+    <p>Во-первых, мы&nbsp;укажем признак уникальности значений в&nbsp;справочнике состояний, чтобы было нельзя случайно добавить несколько одинаковых названий состояния.</p>
+    <br />
+    <form class="form" style="margin:5px;" method="post" action="/{_global_.z}/_d_new/" onsubmit="if(byId('val4').value==''){alert('Введите название типа!'); event.returnValue=false; event.preventDefault();}else addbtn.disabled=true;">
+    <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+    <input type="hidden" name="next_act" value="quest/5&">
+    <table>
+    	<tr>
+    		<td><input type="text" id="val4" name="val" placeholder="Новый Тип" maxlength="127" class="form-control" value="Состояние"></td>
+    		<td><div id="sel_types"><select name="t" class="form-control"><option value="3" SELECTED>SHORT</option><option value="8">CHARS</option><option value="9">DATE</option><option value="13">NUMBER</option><option value="14">SIGNED</option><option value="11">BOOLEAN</option><option value="12">MEMO</option><option value="4">DATETIME</option><option value="10">FILE</option><option value="2">HTML</option></select></div>
+    	    </td>
+        <td align="center">
+    		 &nbsp;Уникальный <br><input type="checkbox" name="unique" value="1" CHECKED title="Невозможно добавить одинаковые независимые объекты (на реквизиты ограничение не распространяется)">
+    	 </td>
+    	 <td><input type="submit" name="addbtn" class="btn btn-primary" value="Создать Тип"></td>
+    	</tr>
+    </table>
+    </form>
+    <br />
+    <p>Обратите внимание на&nbsp;галку Уникальный: она делает невозможным добавление одинаковых независимых объектов (на&nbsp;реквизиты ограничение не&nbsp;распространяется, о&nbsp;чем мы&nbsp;поговорим позже).</p>
+    <p><b>Нажмите Создать тип, чтобы добавить в Интеграл тип Состояние.</b></p>
+</div>
+<div id="5">
+    <h3>Создаем ссылку на&nbsp;справочное значение</h3>
+    <div id="ready5" style="display:none">
+    <div class="alert alert-success">
+    <a href="#" onclick="next()">Вы&nbsp;уже сделали это ранее. Нажмите это сообщение, чтобы продолжить.</a>
+    </div>
+    </div>
+    <p>Теперь мы&nbsp;создадим тип, который будет ссылкой на&nbsp;только что созданный вами тип&nbsp;&mdash; это будет реквизит «Ссылка на&nbsp;состояние», суть которого отражена стрелкой на&nbsp;этом рисунке:</p>
+    <img class="img-fluid" src="/i/status.png">
+    <br /><br />
+    <p><b>Чтобы создать такой тип, кликните &laquo;Создать ссылку&raquo; на&nbsp;форме ниже:</b></p>
+    <div class="panel panel-default" style="max-width:450px">
+    <div class="panel-heading">
+    <div style="display:inline;">
+    <input type="text" disabled name="val" value="Состояние" maxlength="127" class="form-control sm">
+    <select name="t" disabled class="form-control"><option value="3" id="518_3" selected="SELECTED">SHORT</option>
+    </select>
+    <table width="100%">
+    <tr>
+    <td><input type="checkbox" name="unique" value="1" disabled title="Невозможно добавить одинаковые независимые объекты" checked=""> Уникальный</td>
+    <td align="right"><br><input type="submit" disabled name="savebtn" class="btn btn-primary btn-sm" value="Сохранить">&nbsp;&nbsp;&nbsp;<a disabled>Отмена</a></td>
+    </tr>
+    </table>
+    <br><a id="makeref" onclick="makeRef()" title="Создать ссылку на этот тип (использовать его как справочник)"><span class="glyphicon glyphicon-book"></span> Создать ссылку</a> <br><br>
+    </div>
+    </div>
+    </div>
+    <p>Вы&nbsp;можете сделать то&nbsp;же самое в&nbsp;меню Типы, если найдете там этот тип и&nbsp;кликнете на&nbsp;его название.</p>
+</div>
+<div id="6">
+    <h3>Задаём свойства типа</h3>
+    <div id="ready6" style="display:none">
+    <div class="alert alert-success">
+    <a href="#" onclick="next()">Когда все реквизиты будут добавлены, нажмите это сообщение, чтобы продолжить.</a>
+    </div>
+    </div>
+    <div id="error_cond" style="display:none;">
+    <div class="alert alert-danger" style="margin:15px">
+    <p>Внимание! Вы&nbsp;добавили <i>реквизит</i> &laquo;Состояние&raquo; вместо <i>ссылки</i> на&nbsp;&laquo;Состояние&raquo;, которая выглядит так: &laquo;&mdash;&gt; Состояние&raquo; и&nbsp;отображается <b>жирным шрифтом</b>.</p>
+    <p>Удалите, пожалуйста, этот реквизит и&nbsp;добавьте тот, который со&nbsp;стрелкой.</p>
+    </div>
+    </div>
+    <p>Все необходимые типы созданы, и&nbsp;мы&nbsp;можем назначить реквизиты (свойства) для нашей Задачи. Сейчас в&nbsp;редакторе типов она выглядит так:</p>
+    <div style="margin:5px">
+    <div class="panel panel-default"  style="max-width:450px" id="task">
+    <div class="panel-heading">
+    <div style="display:inline;">
+    <input type="text" name="val" value="Задача" maxlength="127" class="form-control sm">
+    <select name="t" class="form-control">
+    <option value="3" selected="SELECTED">SHORT</option>
+    </select>
+    <table width="100%">
+    <tr>
+    <td><input type="checkbox" name="unique" value="1" title="Невозможно добавить одинаковые независимые объекты"> Уникальный</td>
+    <td align="right"><br><input type="submit" name="savebtn" class="btn btn-primary btn-sm" value="Сохранить">&nbsp;&nbsp;&nbsp;<a href="#">Отмена</a></td>
+    </tr>
+    </table>
+    <br><a href="#" title="Создать ссылку на этот тип (использовать его как справочник)"><span class="glyphicon glyphicon-book"></span> Создать ссылку</a> <br><br>
+    <table width="100%">
+    <tr>
+    <td align="left"><a href="#" ><font color="red"><span class="glyphicon glyphicon-remove"></span></font> Удалить тип</a></td>
+    <td align="right"></td>
+    </tr>
+    </table>
+    </div>
+    </div>
+    <div class="panel-body" style="padding-bottom: 5px; padding-top: 5px; display:block;" id="addreq">
+    </div>
+    </div>
+    </div>
+    <p>Чтобы добавить нужные реквизиты (или, говоря языком программистов, добавить нужные колонки в&nbsp;таблицу Задач), выберите по&nbsp;очереди их&nbsp;из&nbsp;нижнего выпадающего списка, каждый раз после этого нажимая кнопку &laquo;Добавить реквизит&raquo;.</p>
+    <p><b>Добавляйте атрибуты по&nbsp;следующему списку:</b></p>
+    <ol>
+    <li id="Дата">Дата</li>
+    <li id="Состояние">&mdash;&gt; Состояние (выбирайте тип со&nbsp;стрелкой&nbsp;&mdash; это ссылка на&nbsp;тип Состояние)</li>
+    <li id="Описание">Описание</li>
+    <li id="Срок">Срок</li>
+    <li id="Файл">Файл</li>
+    </ol>
+    <p>Последовательность реквизитов может быть любая, как вам удобно. Вы&nbsp;всегда можете её&nbsp;изменить, а&nbsp;также удалить или добавить реквизиты задачи.</p>
+</div>
+<div id="7">
+    <h3>Заполним справочник состояний</h3>
+    <div id="ready7" style="display:none">
+    <div class="alert alert-success">
+    <a onclick="next()">Все необходимые состояния добавлены. Нажмите это сообщение, чтобы продолжить, или можете добавить свои варианты состояний.</a>
+    </div>
+    </div>
+    <p>Ранее мы&nbsp;создали тип или, как мы&nbsp;это называем в&nbsp;Интеграле, термин &laquo;Состояние&raquo; для описания состояния задачи.</p>
+    <p>Если вы&nbsp;нажмете меню Словарь и&nbsp;выберете в&nbsp;нем Состояние, то&nbsp;вы&nbsp;увидите приведенную ниже форму. Изначально форма пустая и&nbsp;мы&nbsp;можем добавить свои названия состояний.</p>
+    <p>Это просто: вы&nbsp;вводите название и&nbsp;нажимаете кнопку Добавить. Или можете кликать значения: <span class="scut" onclick="newCond(this.innerHTML)">Новая</span>, <span class="scut" onclick="newCond(this.innerHTML)">Выполнена</span>, <span class="scut" onclick="newCond(this.innerHTML)">Отменена</span>, а&nbsp;я&nbsp;введу значения за&nbsp;вас. Вам нужно только нажимать кнопку Добавить. Попробуйте!</p>
+	<p><font id="newCond" color="red"></font></p>
+    <div style="margin:5px" id="cond_table">
+    </div>
+    <p>Вы&nbsp;можете также добавить свои варианты состояний.</p>
+    <p id="new_required" style="display:none"><font color="red">Обязательно добавьте состояние <span class="scut" onclick="byId('obj_input').value=this.innerHTML;byId('obj_input').focus()">Новая</span>.</font></p>
+	<script>
+	function newCond(i){
+		if(byId('cond_table').innerHTML.indexOf('>'+i+'<')!=-1)
+			byId('newCond').innerHTML='Вы уже добавили <b>'+i+'</b> ранее';
+		else{
+			byId('newCond').innerHTML='';
+			byId('obj_input').value=i;
+			byId('obj_input').focus();
+		}
+	}
+	</script>
+</div>
+<div id="8">
+    <h3>Немного про автозаполнение реквизитов</h3>
+    <div id="ready8" style="display:none">
+    <div class="alert alert-success">
+    <a href="#" onclick="next()">Значения по&nbsp;умолчанию заданы. Нажмите это сообщение, чтобы продолжить.</a>
+    </div>
+    </div>
+    <p>Интеграл позволяет автоматически заполнять реквизиты объекта, когда вы&nbsp;его создаете. Например, это удобно, когда в&nbsp;дату задачи сразу записывается сегодняшняя дата. А&nbsp;ещё удобно автоматически присваивать задаче статус Новая.</p>
+    <p>Мы&nbsp;зададим значение по&nbsp;умолчанию для свойства Дата, записав его в&nbsp;пустое поле правее реквизита Дата на&nbsp;форме ниже. Впишите в&nbsp;это поле служебное слово [TODAY] или нажмите: <span class="scut" onclick="byId('valДата').value=this.innerHTML;byId('valДата').focus();">[TODAY]</span>, и&nbsp;я&nbsp;сделаю это за&nbsp;вас. Затем нажмите Enter или дискетку правее этого поля, чтобы сохранить это изменение.</p>
+    <p><span onclick="byId('specs').style.display=byId('specs').style.display=='block'?'none':'block'" class="scut">Узнать подробнее о&nbsp;служебных словах</span></p>
+    <div id="specs" style="display:none;">
+    <div class="alert alert-info" style="margin:15px">
+    <ul>
+    <li>[TODAY]&nbsp;&mdash; сегодняшний день, например, 15, если сейчас 15.09.2018&nbsp;г.</li>
+    <li>[NOW]&nbsp;&mdash; текущие дата и&nbsp;время</li>
+    <li>[YESTERDAY]&nbsp;&mdash; вчерашний день, например, 31.10.2018, если сейчас 1.11.2018&nbsp;г.</li>
+    <li>[TOMORROW]&nbsp;&mdash; завтрашний день.</li>
+    <li>[MONTH_AGO]&nbsp;&mdash; день месяц назад, например, 28.02.2018, если сейчас 28.03.2018&nbsp;г.</li>
+    <li>[USER]&nbsp;&mdash; имя пользователя, вошедшего в&nbsp;систему (его также видно в&nbsp;левом нижнем углу любой формы системы)</li>
+    <li>[USER_ID]&nbsp;&mdash; ID&nbsp;пользователя, вошедшего в&nbsp;систему</li>
+    </ul>
+    <br />
+    <p><span onclick="byId('specs').style.display='none'" class="scut">Скрыть этот блок</span></p>
+    </div>
+    </div>
+    <div style="margin:5px">
+    <div class="panel panel-default"  style="max-width:450px" id="task">
+    <div class="panel-heading">
+    <div style="display:inline;">
+    <a style="display:inline;">Задача</a>
+    </div>
+    </div>
+    <div class="panel-body" style="padding-bottom:5px;padding-top:5px;display:block;" id="addreq">
+    </div>
+    </div>
+    </div>
+    <div id="set_new">
+    <p>После этого нужно вписать состояние по&nbsp;умолчанию: Новая, и, поскольку это справочное значение, мы&nbsp;используем не&nbsp;слово &laquo;Новая&raquo;, а&nbsp;номер этого слова в&nbsp;справочнике состояний.</p>
+    <p>Узнать номер состояния Новая можно зайдя в&nbsp;меню Словарь, выбрав пункт Состояние и&nbsp;нажав на запись Новая. Вы&nbsp;увидите примерно следующее:</p>
+    <table>
+    	<tr>
+    		<td><font style="background-color: yellow;"><span id="cond_id"></span></font> <b>Состояние:</b></td>
+    	</tr>
+    	<tr>
+    		<td><input type="text" value="Новая" class="form-control"></td>
+    	</tr>
+    </table>
+    <br />
+    <p>Введите номер, выделенный выше желтым, в&nbsp;пустое поле правее реквизита Состояние или кликните: <span class="scut" onclick="byId('valСостояние').value=byId('cond_code').innerHTML;byId('valСостояние').focus();"><b id="cond_code"></b> Новая</span>, и&nbsp;я&nbsp;впишу номер за&nbsp;вас. Нажмите Enter или дискетку правее этого поля, чтобы сохранить это значение.</p>
+    </div>
+</div>
+<div id="9">
+    <h3>Регистрируем нашу первую задачу</h3>
+    <p>Теперь в&nbsp;меню Словарь вы&nbsp;можете нажать пункт Задача, он&nbsp;приведет вас к&nbsp;списку задач, который вы&nbsp;видите ниже (изначально он&nbsp;пустой).</p>
+    <p>Введите краткое описание задачи и&nbsp;нажмите кнопку Добавить, задачи будут добавляться в&nbsp;список после того как вы&nbsp;заполните их&nbsp;свойства.</p>
+    <div style="margin:5px" id="task_table">
+    </div>
+    <p>Задачи можно редактировать, копировать или удалять, нажав на текст задачи в крайней левой колонке.</p>
+    <p id="ready9" style="display:none"><b>Добавьте 3-5 задач и&nbsp;нажмите <a href="/{_global_.z}/quest/11">Далее</a> для продолжения.</b></p>
+</div>
+<div id="10">
+    <h3>Заполняем свойства задачи</h3>
+    <p>Когда вы&nbsp;создаете объект в&nbsp;Интеграле, вы&nbsp;можете заполнить его свойства, используя форму, подобную приведенной ниже.</p>
+    <p>Вы&nbsp;видите, что часть полей заполнена автоматически, как мы&nbsp;настроили это ранее</p>
+    <p>Заполните поля ввода недостающей информацией: заполните более подробное описание, укажите срок и&nbsp;приложите файл. Затем нажмите кнопку Сохранить для продолжения.</p>
+    <div style="margin:5px" id="task_edit">
+    </div>
+    <br />
+    <p>В поле &laquo;Срок&raquo; при задании даты в&nbsp;текущем месяце текущего года можно указать только число. Например, если сегодня&nbsp;26.03.2019, то:</p>
+    <ul>
+        <li>12&nbsp;&mdash; 12-е&nbsp;число текущего месяца: 12.03.2019</li>
+        <li>12.2&nbsp;&mdash; 12&nbsp;февраля текущего года: 12.02.2019</li>
+    </ul>
+    <p>При указании года двумя цифрами, например&nbsp;12.12.16, система сохранит год в&nbsp;текущем веке:&nbsp;12.12.2016. Если необходимо указать год в&nbsp;другом веке, то его нужно указывать целиком:&nbsp;12.12.1916.</p>
+    <p>В&nbsp;качестве разделителя дат можно использовать символы «.», «,» или «/».</p>
+</div>
+<div id="11">
+    <div id="excel">
+    <h3>Отлично, почти половина пройдена!</h3>
+    <p>Теперь можете выполнять основные действия в&nbsp;Интеграле. Все ваши задачи хранятся в Интеграле, и&nbsp;вы&nbsp;можете добавлять и&nbsp;редактировать их&nbsp;в&nbsp;базовом интерфейсе.</p>
+    <img style="width:300px;" src="/i/1half.jpg">
+    <br /><br />
+    <p>Пока вы&nbsp;видите только некое подобие Экселя, где можно создавать таблички. Дальше будет больше чем Эксель. Теперь мы&nbsp;создадим отчет для отображения наших задач.</p>
+    <p><b>В&nbsp;меню Словарь есть пункт Запрос, давайте посмотрим на&nbsp;него: нажмите <span onclick="byId('dict').style.display='block';byId('excel').style.display='none'" class="scut">Словарь</span>.</b></p>
+    </div>
+    <div id="dict" style="display:none;">
+    <h3>В&nbsp;Интеграле есть необходимые вещи</h3>
+    <p>Как вы&nbsp;видите, Интеграл изначально знает некоторые термины, которые есть в&nbsp;каждом приложении&nbsp;&mdash; это пользователь, его роль, заданные ею&nbsp;права пользователя (что он&nbsp;может видеть в&nbsp;системе) и&nbsp;справочники. Теперь он&nbsp;знает термин Задача и&nbsp;содержит справочник её&nbsp;состояний.</p>
+    <ul class="list-group" style="max-width:400px;" width="100%">
+    <!-- Begin:&Uni_obj_List --><li class="list-group-item"><A id="t{ID}" HREF="/{_global_.z}/object/{ID}" target="_blank" style="display:block;">{VAL}</A></li>
+    <!-- End:&Uni_Obj_List -->
+    </ul>
+    <script>
+            byId('t22').href='/{_global_.Z}/quest/12';
+            byId('t22').target='';
+        </script>
+    <p><b>Кликните ссылку Запрос, чтобы перейти к&nbsp;списку запросов.</b></p>
+    </div>
+</div>
+<div id="12">
+    <h3>Запросы и&nbsp;отчеты в&nbsp;Интеграле</h3>
+    <div id="ready12" style="display:none">
+    <div class="alert alert-success">
+    <a href="#" onclick="next()">Вы уже добавили запрос &laquo;Актуальные задачи&raquo;. Нажмите это сообщение, чтобы продолжить, или вы можете здесь же создать другой свой запрос.</a>
+    </div>
+    </div>
+    <p>Отчеты в&nbsp;Интеграле строятся на&nbsp;основании запросов. Запросы, помимо выборки, могут изменять, удалять и&nbsp;добавлять данные. Ниже вы&nbsp;видите 3&nbsp;служебных запроса, которые изначально существуют в&nbsp;Интеграле: они выбирают данные для отображения меню текущего пользователя, списка всех запросов и&nbsp;список полей формы.</p>
+    <p id="done12">Попробуем сделать наш первый отчет, который мы&nbsp;назовем <span class="scut" onclick="byId('obj_input').value=this.innerHTML;byId('act_tasks').style.display='block';">Актуальные задачи</span> (кликните это название, чтобы не&nbsp;набирать его руками).</p>
+    <div style="margin:5px" id="qry_table">
+    </div>
+    <p id="act_tasks" style="display:none;"><b>Теперь нажмите кнопку &laquo;Добавить&raquo; для продолжения&nbsp;&mdash; будет добавлен новый запрос.</b></p>
+    <p>Кстати, вы&nbsp;сможете вернуться сюда позже и&nbsp;создать для себя другие отчеты, в&nbsp;конце курса я&nbsp;дам вам нужные ссылки.</p>
+</div>
+<div id="13">
+    <h3>Из&nbsp;чего состоит запрос?</h3>
+    <p>Перед вами форма редактирования вашего запроса. На&nbsp;предыдущем шаге вы&nbsp;дали ему название, а&nbsp;теперь можете задать дополнительные параметры. Предлагаю для начала указать, какие колонки данных он&nbsp;выберет из&nbsp;наших таблиц.</p>
+    <div style="margin:5px" id="qry_edit">
+    </div> <br />
+    <p>У&nbsp;запроса есть реквизит&nbsp;&mdash; Колонки запроса. Это целый набор данных, подчиненный нашему запросу&nbsp;&mdash; число в&nbsp;скобках указывает количество полей данных, которые запрос выберет из&nbsp;базы данных.</p>
+    <p><b>Для продолжения нажмите на&nbsp;значение реквизита &laquo;Колонки запроса&raquo; (число в&nbsp;скобках).</b></p>
+</div>
+<div id="14">
+    <h3>Колонки запроса&nbsp;&mdash; поля данных</h3>
+    <div id="ready14" style="display:none">
+    <div class="alert alert-success">
+    <a href="/{_global_.z}/quest/16?F_U=<!-- Begin:_FU -->{_request_.F_U}<!-- End:_FU -->">Вы уже добавили все нужные колонки запроса. Нажмите это сообщение, чтобы продолжить.</a>
+    </div>
+    </div>
+    <div id="miss14" style="display:none">
+    <div class="alert alert-danger">
+    <p>Вы добавили поле, никак не связанное с&nbsp;задачами, поэтому в&nbsp;выпадающем списке колонок отчета вы&nbsp;больше не&nbsp;видите ничего про&nbsp;задачи.</p>
+    <p>Удалите, пожалуйста, постороннее поле, нажав x в&nbsp;правой колонке таблицы, и&nbsp;вы&nbsp;сможете продолжить с&nbsp;запросом о&nbsp;задачах.</p>
+    </div>
+    </div>
+    <div id="empty14" style="display:none;">
+    <p>Ниже вы&nbsp;видите таблицу колонок запроса, она изначально пуста. В&nbsp;тоже время выпадающий список с&nbsp;вариантами колонок запроса сравнительно велик&nbsp;&mdash; в&nbsp;нем содержатся все термины, которым обучен ваш Интеграл, включая&nbsp;те, что вы&nbsp;сами добавили.</p>
+    <p>Интеграл знает, как связаны все эти термины в&nbsp;нашей схеме данных (меню Типы). Когда мы&nbsp;добавим в&nbsp;таблицу какой-либо термин из&nbsp;выпадающего списка, то&nbsp;в&nbsp;нём останутся только те&nbsp;термины, которые как-либо связаны с&nbsp;уже добавленными.</p>
+    </div>
+    <div id="next14" style="display:none;">
+    <p>Вы&nbsp;видите, как сократился выпадающий список, когда вы&nbsp;выбрали первую колонку вашего запроса. В&nbsp;нем только те&nbsp;термины, которые как-то связаны с&nbsp;выбранными колонками.</p>
+    <div id="task14" style="display:none;">
+    <div class="alert alert-warning">
+    Следующим полем добавьте само значение <b>Задача</b>&nbsp;&mdash; оно самое верхнее в&nbsp;выпадающем списке.
+    </div>
+    </div>
+    <p><b>Добавьте в&nbsp;наш запрос все поля, относящиеся к&nbsp;задаче (их&nbsp;не&nbsp;менее&nbsp;6), поочередно выбирая их&nbsp;из&nbsp;выпадающего списка и&nbsp;нажимая кнопку Добавить.</b></p>
+    </div>
+    <div style="margin:5px" id="cols_table">
+    </div>
+    <p id="date14" style="display:none;">Мы&nbsp;выбрем нужные нам сведения о&nbsp;задачах. Начать предлагаю с&nbsp;даты: для этого нужно выбрать из&nbsp;выпадающего списка значение &laquo;Задача -&gt; Дата&raquo; и&nbsp;нажать кнопку Добавить.</p>
+    <p>Если вам понадобится удалить какую-либо колонку или изменить их&nbsp;очередность, воспользуйтесь ссылками &laquo;^&raquo; (переместить выше) и&nbsp;&laquo;X&raquo; (удалить) справа в&nbsp;таблице.</p>
+    </div>
+<div id="15">
+    <h3>Задаем свойства поля данных</h3>
+    <div id="task_date" style="display:none;">
+    <p>Мы&nbsp;описываем колонку нашего запроса: у&nbsp;нее много свойств, которые помогут собрать любой запрос, доступный в&nbsp;языке SQL. Пока мы&nbsp;ограничимся заполнением поля Имя в&nbsp;отчете&nbsp;&mdash; давайте запишем туда &laquo;Дата&raquo;, чтобы видеть это название в&nbsp;нашем отчете о&nbsp;задачах. Иначе мы&nbsp;увидим менее изящное &laquo;Задача -&gt; Дата&raquo;, в&nbsp;то&nbsp;время как мы&nbsp;и&nbsp;так знаем, что в&nbsp;этом отчете дата относится к&nbsp;задаче.</p>
+    <p>В&nbsp;более сложных случаях, когда задействовано множество разных таблиц, принадлежность поля может быть не&nbsp;так очевидна.</p>
+    <p>Кликните <span class="scut" onclick="byId('100').value=this.innerHTML;byId('100').focus()">Дата</span>, я&nbsp;впишу это значение за&nbsp;вас, а&nbsp;затем нажмите Enter или кнопку Сохранить для сохранения этого изменения.</p>
+    </div>
+    <div id="task_filter" style="display:none;">
+    <div class="alert alert-warning" style="margin:15px">
+    <p>Внимание! Вы&nbsp;выбрали поле &laquo;Состояние задачи&raquo;, и&nbsp;для того чтобы отчет отражал только актуальные задачи, следует поставить фильтр на&nbsp;соответствующее состояние.</p>
+    </div>
+    <p>Для задания фильтров запроса предназначены поля &laquo;Значение&nbsp;от&raquo; и&nbsp;&laquo;Значение до&raquo;. Кликните <span class="scut" onclick="byId('102').value=this.innerHTML;byId('102').focus()">Новая</span> и&nbsp;я&nbsp;впишу туда значение за&nbsp;вас.</p>
+    <p><span class="scut" onclick="byId('more15').style.display='block'">Подробнее</span></p>
+    <div class="alert alert-info" id="more15" style="margin:15px;display:none;">
+    <p>Фильтр можно задать для диапазона значений, если тип поля&nbsp;&mdash; число. В&nbsp;нашем&nbsp;же случае это строка, поэтому мы&nbsp;напишем значение фильтра в&nbsp;любое из&nbsp;этих двух полей. От&nbsp;и&nbsp;До означают диапазон чисел (включая его границы) или значения строк с&nbsp;возможным использованием маски.</p>
+    <p>Заданное нами условие отберет только те&nbsp;записи, у&nbsp;которых состояние&nbsp;&mdash; &laquo;Новая&raquo;.</p>
+    <p><span class="scut" onclick="byId('more15').style='display:none;'">Скрыть</span></p>
+    </div>
+    <p>Нажмите Enter или кнопку Сохранить для сохранения изменений и&nbsp;перехода к&nbsp;следующему действию.</p>
+    </div>
+    <div id="task_others" style="display:none;">
+    <p>Если хотите изменить название колонки, которое вы&nbsp;бы хотели видеть в&nbsp;отчете, впишите его в&nbsp;поле <span class="scut" onclick="byId('100').focus()">&laquo;Имя в&nbsp;отчете&raquo;</span>.</p>
+    <p>Нажмите Enter или кнопку Сохранить для сохранения изменений и&nbsp;перехода к&nbsp;следующему действию.</p>
+    </div>
+    <div style="margin:5px" id="field_edit">
+    </div> <br />
+</div>
+<div id="16">
+    <h3>Запуск отчета</h3>
+    <!-- Begin:_Interactive --><!--{_request_.interactive}-->
+    <div class="alert alert-info">
+    Нажмите галку &laquo;Интерактивный&raquo; и&nbsp;кнопку Сохранить, а&nbsp;затем сформируйте отчет заново.
+    </div>
+    <!-- End:_Interactive -->
+    <p>Итак, отчет на&nbsp;основании запроса Актуальные задачи готов. Один из&nbsp;его реквизитов&nbsp;&mdash; это кнопка, которая его запускает. Да, в&nbsp;Интеграле есть возможность не&nbsp;только автоматически заполнять реквизиты, но&nbsp;и&nbsp;программировать контекстные действия с&nbsp;объектом&nbsp;&mdash; в&nbsp;данном случае вызов отчета. Для этого в Редакторе типов к&nbsp;реквизиту привязывается команда.</p>
+    <div style="margin:5px" id="run_rep_edit">
+    </div> <br />
+    <p><b>Нажмите кнопку Сформировать для запуска отчета.</b></p>
+</div>
+<div id="17">
+    <h3>Внешний вид отчета</h3>
+    <p>Вот так выглядит построенный отчет. Вы&nbsp;сами сделали его&nbsp;&mdash; собрали данные из&nbsp;двух разных таблиц (таблица задач и&nbsp;справочник состояний), не&nbsp;зная языка SQL, не&nbsp;прибегая к&nbsp;программированию и&nbsp;даже не&nbsp;задумываясь, как всё устроено внути сервиса!</p>
+    <div style="margin:5px" id="rep">
+    </div> <br />
+    <p>Он&nbsp;находится в&nbsp;меню Словарь в&nbsp;пункте Запрос.</p>
+    <p>Предлагаю вам улучшить этот отчет, сделать его интерактивным&nbsp;&mdash; чтобы при клике по&nbsp;названию задачи попадать на&nbsp;форму её&nbsp;редактирования. Для этого надо на&nbsp;предыдущем экране нажать галку &laquo;Интерактивный&raquo; и&nbsp;кнопку Сохранить, а&nbsp;затем сформировать отчет заново. Чтобы вернуться на&nbsp;предыдущий шаг <a href="/{_global_.z}/quest/16?interactive=1">кликните здесь</a>. Теперь названия задач превратились в&nbsp;гиперссылки, по&nbsp;которым открывается форма редактирования задачи.</p>
+    <p>Для продолжения нажмите <a href="/{_global_.z}/quest/18?rep_id=<!-- Begin:_myrep -->{_request_.rep_id}<!-- End:_myrep -->">Далее</a>.</p>
+</div>
+<div id="18">
+    <h3>Дорабатываем задачу под себя</h3>
+    <p>Теперь если вам понадобится добавить к&nbsp;задаче свойства, связать её&nbsp;с&nbsp;другими структурами данных, например, со&nbsp;справочником степеней важности задачи или со&nbsp;списком контактов, то&nbsp;вы&nbsp;всегда можете:</p>
+    <ul>
+    <li>добавить нужные вам термины, как вы&nbsp;это делали <a href="/{_global_.z}/quest/1">здесь</a>;</li>
+    <li>собрать из&nbsp;них новые типы, добавив терминам реквизиты&nbsp;&mdash; <a href="/{_global_.z}/quest/6">вот так</a>;</li>
+    <li><a href="/{_global_.z}/quest/5">создать ссылку на&nbsp;термин</a> и&nbsp;<a href="/{_global_.z}/quest/7">заполнить справочник</a>;</li>
+    <li><a href="/{_global_.z}/quest/14?F_U=<!-- Begin:_myrep -->{_request_.rep_id}<!-- End:_myrep -->">добавить нужные колонки</a> в&nbsp;ваш отчет или <a href="/{_global_.z}/quest/12">создать новый</a>;</li>
+    </ul>
+    <p>Также я рекомендую вам скачать <a href="https://tryjob.ru/download/Devs_manual.docx">Руководство разработчика</a> и посмотреть <a target="_blank" href="https://www.youtube.com/channel/UCwnKjSY_ZTp-ehfpGTyPOBw/videos?flow=grid&sort=da&view=0">Обучающие ролики партнеров сервиса</a>.</p>
+    <p>Если у&nbsp;вас есть какие-то замечания и&nbsp;пожелания по&nbsp;этому курсу или по&nbsp;Интегралу в&nbsp;целом, то&nbsp;вы&nbsp;можете нам сообщить о&nbsp;них, заполнив <span class="scut" onclick="byId('feedback').style.display='block';">эту форму</span>.</p>
+    <div id="feedback" style="display:none;">
+    <TABLE>
+    <TR><TD colspan="2"><TEXTAREA placeholder="Введите сообщение здесь" class="form-control input-sm" id="t725" COLS=50 ROWS=4 ></TEXTAREA></TD>
+    </TR>
+    <TR><TD align="left"><span class="scut" onclick="byId('feedback').style.display='none'">Отмена</span></TD>
+    <TD align="right"><input type="submit" id="feedback_btn" class="btn btn-primary btn-sm" value="Отправить" onclick="crm('feedback')"></TD>
+    </TR>
+    </TABLE>
+    <br />
+    </div>
+    <div class="alert alert-success">
+    <p>Вы&nbsp;можете записаться на&nbsp;интенсивный курс обучения Интегралу, по&nbsp;окончании которого получите оплачиваемое задание, которое позволит сразу окупить обучение. Курсы бывают индивидуальные или групповые, очные или удаленные. Оставить заявку можно <span class="scut" onclick="getNFill('object/18/?F_18={_global_.user}','my_phone');byId('training').style.display='block'">прямо здесь</span>.</p>
+    <br />
+    <div id="training" style="display:none;">
+    <table class="table table-condensed">
+    <tr>
+    	<td style=" max-width:400px; " align="right">Формат обучения: </td>
+    	<td><select id="t738" class="form-control input-sm">
+    		<option value="740" r="738">3&nbsp;дня, индивидуально (28900)</option>
+    		<option value="739" r="738">3&nbsp;дня, группа (8900)</option>
+    		<option value="741" r="738">5&nbsp;дней, группа (12900)</option>
+    		<option value="742" r="738">5&nbsp;дней, индивидуально (44900)</option>
+    		<option value="744" r="738">Скайп консультации (1500 за&nbsp;час)</option>
+    		<option value="743" r="738">Скайп сессии по&nbsp;8&nbsp;часов (1000&nbsp;в час)</option>
+    		</select>
+    	</td>
+    </tr>
+    <tr>
+    	<td style=" max-width:400px; " align="right">Город: </td>
+    	<td><select id="t747" class="form-control input-sm">
+    		<option value="750" r="747">Москва</option>
+    		<option value="758" r="747">Екатеринбург</option>
+    		<option value="752" r="747">Казань</option>
+    		<option value="754" r="747">Краснодар</option>
+    		<option value="753" r="747">Нижний Новгород</option>
+    		<option value="756" r="747">Новосибирск</option>
+    		<option value="755" r="747">Ростов</option>
+    		<option value="757" r="747">Самара</option>
+    		<option value="751" r="747">Санкт-Петербург</option>
+    		<option value="759" r="747">Другой (укажите в&nbsp;примечании)</option>
+    		</select>
+    	</td>
+    </tr>
+    <tr>
+    	<td style=" max-width:400px; " align="right">Телефон: </td>
+    	<td><input class="form-control input-sm" type="text" id="t765" size="50" value="">
+    	</td>
+    </tr>
+    <tr>
+    	<td style=" max-width:400px; " align="right">Примечание: </td>
+    	<td><textarea class="form-control input-sm" id="t748" cols="50" rows="2"></textarea>
+    	</td>
+    </tr>
+    <TR>
+    <TD align="left"><span class="scut" onclick="byId('training').style.display='none'">Отмена</span></TD>
+    <TD align="right"><input type="submit" id="training_btn" class="btn btn-primary btn-sm" value="Отправить" onclick="crm('training')"></TD>
+    </TR>
+    </table>
+    </div>
+    </div>
+    <p>Следующим шагом мы&nbsp;создадим форму для просмотра и&nbsp;редактирования задач. Нажмите <a href="#" onclick="next()">Далее</a>.</p>
+</div>
+<div id="19">
+    <h3>Конструктор форм Интеграла</h3>
+    <p>Конструктор форм находится в&nbsp;меню <a href="/{_global_.z}/myform">Формы</a>. Он&nbsp;позволяет создать форму с&nbsp;несколькими панелями, на&nbsp;которые можно выводить отчеты, формы для содания объектов, кнопки для совершения действий, а&nbsp;также всё это вместе в&nbsp;различных комбинациях.</p>
+    <p>Давайте создадим вашу первую форму в&nbsp;Интеграле. Введите её&nbsp;имя или кликните <span class="scut" onclick="byId('t137').value=this.innerHTML">Мои задачи</span> и&nbsp;нажмите &laquo;Создать форму&raquo;.</p>
+    <br />
+    <form method="post" action="/{_global_.z}/_m_new/137?up=1" onsubmit="addbtn.disabled=true; return true;">
+    <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+    <input type="hidden" name="next_act" value="myform">
+    <table>
+    <tr>
+    	<td><input placeholder="Введите имя" type="text" id="t137" name="t137" class="form-control input-sm"></td>
+    	<td><input type="submit" name="addbtn" class="btn btn-sm btn-default" value="Создать форму"></td>
+    </tr>
+    </table>
+    </form>
+    <br /><br />
+    <p>Если вы&nbsp;уже сделали это ранее, то&nbsp;найдёте вашу форму в&nbsp;меню <a href="/{_global_.z}/myform">Формы</a>.</p>
+</div>
+</div><!--/Steps-->
+</div><!--/Frame-->
+<script>
+function makeRef(){
+    post('_d_ref/'+cond_id+'?next_act=quest/6%26');
+}
+function sVal(i, ii){
+	i.v=i.v.toUpperCase();
+	ii.v=ii.v.toUpperCase();
+	if(i.v>ii.v)
+		return 1;
+	else if(i.v<ii.v)
+		return -1;
+	return 0;
+}
+var bt=new Array();
+bt[3]='SHORT';bt[8]='CHARS';bt[9]='DATE';bt[13]='NUMBER';bt[14]='SIGNED';bt[11]='BOOLEAN';bt[12]='MEMO';bt[4]='DATETIME';bt[10]='FILE';bt[2]='HTML';bt[7]='BUTTON';bt[6]='PWD';bt[5]='GRANT';bt[15]='CALCULATABLE';bt[16]='REPORT_COLUMN';bt[17]='PATH';
+function getBT(t){
+	if(bt[t]===undefined)
+		return "reference";
+	return bt[t].toLowerCase();
+}
+function drawReqs(i,step){
+	var reqs=id=nullable=def_val=alias=aid="";
+	var seek_alias=new Array();
+    var a=new Array();
+    // Sort the types list
+    var s=new Array();
+    for(var k in t)
+    	s[k]={v:t[k].v, i:k};
+    s.sort(sVal);
+	reqs+='<table class="table table-condensed table-striped">';
+	for(var req in r[i]){
+		if(r[i][req].a.search(nullmask)==-1)
+			nullable='set_not_null';
+		else
+			nullable='set_null';
+		def_val=r[i][req].a.replace(nullmask, '');
+		seek_alias=def_val.match(aliasmask);
+		if(r[i][req].r==""){ // Not a Reference requisite
+			id=r[i][req].t;
+			name='<a href="#'+id+'">'+t[id].v+'</a>'; // Plain req
+			if(r[id]!==undefined)
+				name='<b>'+name+'</b>'; // Array of values
+		}
+		else{ // Reference req
+			if(seek_alias===null)
+				alias='';
+			else{
+				alias=seek_alias[1];
+				def_val=def_val.replace(aliasmask, '');
+			}
+			id=t[r[i][req].t].t;
+			aid=r[i][req].i;
+			if(alias=='')
+				a[aid]={alias:t[id].v,ref:id};
+			else
+				a[aid]={alias:alias,ref:id};
+			name='<div style="display:none;" id="def'+aid+'"></div> <div style="display:inline;" id="a'+aid+'"><a href="#"><b>'+a[aid].alias+'</b></a>';
+			name+='</div>';
+		}
+		reqs+='<tr><td>'+name+'</td> <td>';
+		reqs+='<A HREF="#" onclick="post(\'_d_del_req/'+r[i][req].i+'?next_act=quest/'+step+'%26\')" TITLE="Удалить">X</A>&nbsp;';
+		reqs+='&nbsp;<A HREF="#" onclick="post(\'_d_up/'+r[i][req].i+'?next_act=quest/'+step+'%26\')" TITLE="Поднять выше">^</A>&nbsp;';
+		if(t[r[i][req].t].t==0)
+			reqs+='</td> <td colspan="2">&nbsp;</td>';
+		else{
+			if(nullable=='set_null')
+				reqs+='&nbsp;<A HREF="#" onclick="post(\'_d_not_null/'+r[i][req].i+'/?up='+i+'&next_act=quest/'+step+'%26\')" TITLE="Нажмите, чтобы сделать поле необязательным">[!]</A>';
+			else
+				reqs+='&nbsp;<A HREF="#" onclick="post(\'_d_null/'+r[i][req].i+'/?up='+i+'&next_act=quest/'+step+'%26\')" TITLE="Нажмите, чтобы сделать поле обязательным">[&nbsp;]</A>';
+			reqs+='&nbsp;</td> <td><FORM method="post" id="frm'+r[i][req].i+'" action="/{_global_.Z}/_d_attrs/'+r[i][req].i+'/?up='+i+'"><input type="hidden" name="_xsrf" value="{_global_.xsrf}">';
+			reqs+='<input type="hidden" name="'+nullable+'" value="1"><input type="hidden" name="next_act" value="quest/'+step+'&">';
+			if(alias!=t[id].v)
+				reqs+='<input type="hidden" name="alias" value="'+alias+'">';
+			reqs+='<input type="text" id="val'+t[id].v+'" name="val" value="'+def_val+'" size="15"></FORM></td>';
+			reqs+='<td><a href="#" onclick="byId(\'frm'+r[i][req].i+'\').submit();event.returnValue=false;event.preventDefault();"><font size="+1"><span class="glyphicon glyphicon-floppy-disk"></span></font></a>';
+		reqs+='</td></tr>';
+		}
+	}
+	reqs+='</table>';
+	// Draw the Add req DDList and button
+	reqs+='<FORM method="post" action="/{_global_.Z}/_d_req/'+i+'" onsubmit="addreqbtn.disabled=true;">';
+	reqs+='<input type="hidden" name="_xsrf" value="{_global_.xsrf}"><input type="hidden" name="next_act" value="quest/6&">';
+	reqs+='<div class="input-group input-group-sm"><select style="max-width:300px; " name="t" class="form-control"><option> </option>';
+	var my=new Array();
+	my[i]=i;
+	for(var j in r[i]) // Get the already used Reqs
+		if(r[i][j].r=="") // Skip Refs, for we can add it several times
+			my[r[i][j].t]=1;
+	if(t[i].r==""){
+		for(j in s)
+			if(my[s[j].i]===undefined){
+				reqs+='<option value="'+s[j].i+'">'+ ((t[s[j].i].r=="") ? t[s[j].i].v+' ('+getBT(t[s[j].i].t)+')': '-->'+t[s[j].i].v) +'</option>';
+				my[s[j].i]=1;
+	        }
+	}
+	else
+		for(j in r[t[i].r])
+			if(my[r[t[i].r][j].t]===undefined)
+				reqs+='<option value="'+r[t[i].r][j].t+'">'+ ((t[r[t[i].r][j].t].r=="") ? t[r[t[i].r][j].t].v : '-->'+t[r[t[i].r][j].t].v) +'</option>';
+	reqs+='</select><span class="input-group-btn"><input type="submit" class="btn btn-default" name="addreqbtn" value="Добавить реквизит" ></span></FORM></div>';
+	byId('addreq').innerHTML=reqs;
+	if('{_global_.id}'=='8')
+	    if(byId('valДата').value=='[TODAY]' && byId('valСостояние').value!=''){
+	        byId('ready8').style.display='block';
+	        byId('set_new').style.display='none';
+	    }
+}
+function next(){
+    event.returnValue=false; event.preventDefault();
+    i++;
+    document.location.href='/{_global_.Z}/quest/'+i;
+}
+function crm(i){
+    var obj=new XMLHttpRequest();
+    obj.open('GET','/my/xsrf?secret=1f2e3e4d5b6a7c8k9',true); 
+    obj.send();
+    obj.onload=function(e){
+        var json=JSON.parse(this.responseText);
+        crmPost(i,json['_xsrf']);
+        obj.abort();
+    }
+}
+function crmPost(i,xsrf){
+    var action='/my/_m_new/',send;
+    switch (i){
+        case 'feedback':
+            action+='722?t730';
+            if(byId('t725').value==''){
+                alert('Введите, пожалуйста, текст сообщения');
+                byId('t725').focus();
+                return;
+            }
+            send='t725='+byId('t725').value;
+            break;
+        case 'training':
+            if(byId('t765').value.length<10){
+                alert('Укажите, пожалуйста, ваш телефон для связи');
+                byId('t765').focus();
+                return;
+            }
+            action+='735?t764';
+            send='t738='+byId('t738').value+'&t747='+byId('t747').value+'&t748='+byId('t748').value+'&t765='+byId('t765').value;
+            break;
+    }
+    var obj=new XMLHttpRequest(); 
+    obj.open('POST',action+'={_global_.z}&next_act=nul&up=1',true); 
+    obj.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    obj.send(send+'&_xsrf='+xsrf+'&secret=1f2e3e4d5b6a7c8k9');
+    obj.onload=function(e){
+        var json=JSON.parse(this.responseText);
+        byId(i).innerHTML='<p><b>Спасибо! Ваша заявка принята, её ID='+json['id']+'.</b></p>';
+        obj.abort();
+    }
+}
+function getHTML(u,b,prefix){
+    prefix=prefix||''; // prefix is blank by default
+    var i,j,k,l,h='',obj=new XMLHttpRequest(); 
+    obj.open('GET','/{_global_.z}/'+u,true); 
+    obj.send();
+    obj.onload=function(e){
+        switch(b){
+        case 'draw_rep': // Put the report results on the form
+            byId(prefix).innerHTML='<FORM method="post" id="report"'
+                                    +this.responseText.replace(/<script>.+<\/script>/g,'')
+//                                        .replace(/\/{_global_.z}\/report\//g,'/{_global_.z}/{_global_.action}/{_global_.id}?rep_id=')
+                                        .split('<FORM method="post" id="report"').pop()
+                                        .split('<FORM method="POST" id="post"').shift();
+            if(get_cookie("compact")=="compact")
+            	byId('report_table').classList.add('table-condensed');
+            break;
+        }
+        obj.abort();
+    }
+}
+function getNFill(u,b,prefix){
+    prefix=prefix||''; // prefix is blank by default
+    var i,j,k,l,h='',obj=new XMLHttpRequest(); 
+    obj.open('GET','/api/{_global_.z}/'+u,true); 
+    obj.setRequestHeader('X-Authorization','{_global_.token}');
+    obj.send();
+    obj.onload=function(e){
+        try{var json=JSON.parse(this.responseText);}
+        catch(e){console.log(this.responseText);console.log(e);}
+        obj.abort();
+        switch(b){
+        case 'my_phone': // Get the user's phone
+            if(json['&main..&uni_obj.&uni_obj_all.&uni_object_view_reqs'])
+                byId('t765').value=json['&main..&uni_obj.&uni_obj_all.&uni_object_view_reqs'].val[2];
+            break;
+        case 'condition': // Put the report results on the form
+            h='<TR><TD ALIGN="LEFT"><A HREF="/{_global_.z}/edit_obj/:id:" target="_blank" TITLE="Редактировать">:val:</A></TD></TR>';
+            if(json['&main..&uni_obj.&uni_obj_all'])
+                for(i in json['&main..&uni_obj.&uni_obj_all'].id)
+                    if(json['&main..&uni_obj.&uni_obj_all'].val[i]=='Новая'){
+                        byId('cond_id').innerHTML=byId('cond_code').innerHTML=json['&main..&uni_obj.&uni_obj_all'].id[i];
+//                        byId('cond_new').href+=json['&main..&uni_obj.&uni_obj_all'].id[i];
+                    }
+            break;
+        case 'object': // Draw the objects list
+            if(json['&main..&uni_obj']){
+                var head='<FORM method="post" action="/{_global_.z}/_m_new/'+json['&main..&uni_obj'].typ+'" ONSUBMIT="if(byId(\'obj_input\').value==\'\'){alert(\'Введите значение!\');byId(\'obj_input\').focus();event.returnValue=false;event.preventDefault();}else addbtn.disabled=true;">';
+                head+='<input type="hidden" name="_xsrf" value="{_global_.xsrf}">';
+                if('{_global_.id}'=='9' || '{_global_.id}'=='12' || '{_global_.id}'=='14')
+                    head+='<input type="hidden" id="next_act" name="next_act" value="quest/'+({_global_.id}+1)+'?">';
+                else
+                    head+='<input type="hidden" id="next_act" name="next_act" value="quest/{_global_.id}?">';
+                head+='<input type="hidden" name="up" value="'+json['&main..&uni_obj'].up+'">';
+                head+='<br /><TABLE><TR>';
+                head+=' <TD>'+json['&main..&uni_obj'].val+':&nbsp;</TD>';
+                if(json['&main..&uni_obj.&new_req_report_column']){
+                    head+=' <TD><select id="obj_list" name="t'+json['&main..&uni_obj'].typ+'" style=" max-width:400px; " class="form-control">';
+                    for(i in json['&main..&uni_obj.&new_req_report_column.&rep_col_list'].id)
+                        head+='<option value="'+json['&main..&uni_obj.&new_req_report_column.&rep_col_list'].id[i]+'">'
+                            +json['&main..&uni_obj.&new_req_report_column.&rep_col_list'].val[i]+'</option>';
+                    head+='</select></TD>';
+                }
+                else
+                    head+=' <TD><input id="obj_input" autofocus type="text" name="t'+json['&main..&uni_obj'].typ+'" class="form-control"></TD>';
+                head+=' <TD><input type="submit" name="addbtn" class="btn btn-default" value="Добавить"></TD>';
+                head+='</TR></TABLE>';
+                head+='</FORM> <br />';
+                head+='<TABLE class="table table-striped table-condensed table-bordered"><TR><TD BGCOLOR="#E8F4FC" ALIGN="center"><A HREF="#"><B>'+json['&main..&uni_obj'].val+'</B></A></TD>';
+                if(json['&main..&uni_obj.&uni_obj_head'])
+                    for(i in json['&main..&uni_obj.&uni_obj_head'].id)
+                        head+='<TD BGCOLOR="#E8F4FC" ALIGN="center"><A HREF="#">:val:</A></TD>'.replace(':val:',json['&main..&uni_obj.&uni_obj_head'].val[i]);
+                if(json['&main..&uni_obj'].up>1)
+                    head+='<TD BGCOLOR="#E8F4FC" style="padding:0px;">&nbsp;</TD></TR>';
+                k=i;
+                var tasks='';
+                if(json['&main..&uni_obj.&uni_obj_all'])
+                    for(i in json['&main..&uni_obj.&uni_obj_all'].id){
+                        tasks+='<tr><TD><A style=" display:block; " HREF="/{_global_.z}/edit_obj/:id:" target="_blank" TITLE="Редактировать">:val:</A></TD>'
+    								.replace(':id:',json['&main..&uni_obj.&uni_obj_all'].id[i])
+                                    .replace(':val:',json['&main..&uni_obj.&uni_obj_all'].val[i]);
+                        for(j=0;j<=k;j++)
+                            tasks+='<TD>&nbsp;:val:&nbsp;</TD>'.replace(':val:',json['&object_reqs'][json['&main..&uni_obj.&uni_obj_all'].id[i]][j]);
+                        if(json['&main..&uni_obj'].up>1){
+                    		tasks+='<TD ALIGN="CENTER"><A HREF="#" onclick="post(\'_m_up/'+json['&main..&uni_obj.&uni_obj_all'].id[i]
+                    		                                  +'?next_act=quest/{_global_.id}?F_U=<!-- Begin:_FU -->{_request_.F_U}<!-- End:_FU -->%26\')" TITLE="Переместить выше">^</A>';
+                    		tasks+=' <A href="#" onclick="post(\'_m_del/'+json['&main..&uni_obj.&uni_obj_all'].id[i]+'/?up='+json['&main..&uni_obj'].typ+'&f_u='+json['&main..&uni_obj'].up
+                    		                                  +'&next_act=quest/{_global_.id}?F_U=<!-- Begin:_FU -->{_request_.F_U}<!-- End:_FU -->%26\')" TITLE="Удалить">X</A></TD></tr>';
+                        }
+                    }
+                byId(prefix+'_table').innerHTML=head+tasks+'</table> <br />';
+
+                if('{_global_.id}'=='7')
+                    if(json['&main..&uni_obj.&uni_obj_all'].id.length>=3)
+                        if(byId('cond_table').innerHTML.indexOf('Новая')==-1)
+                            byId('new_required').style.display='block';
+                        else
+                            byId('ready7').style.display='block';
+                if('{_global_.id}'=='9')
+                    if(json['&main..&uni_obj.&uni_obj_all']){
+                        byId('ready9').style.display='block';
+                        byId(prefix+'_table').innerHTML=byId(prefix+'_table').innerHTML.replace(/\/{_global_.z}\/edit_obj\/(\d+)/g, '/{_global_.z}/quest/10#$1')
+                                                                                        .replace(/target="_blank"/g, '');
+                    }
+                    else
+                        byId('obj_input').value='Пройти этот квест';
+                if('{_global_.id}'=='12')
+                    if(byId('qry_table').innerHTML.indexOf('Актуальные задачи')>0){
+                        byId('ready12').style.display='block';
+                        byId('done12').style.display='none';
+                    }
+                if('{_global_.id}'=='14')
+                    if(json['&main..&uni_obj.&uni_obj_all']){
+                        byId('next14').style.display='block';
+                        if(byId('obj_list').innerHTML.indexOf('>Задача<')==-1)
+                            byId('miss14').style.display='block';
+                        else if(byId('cols_table').innerHTML.indexOf('>Задача</a>')==-1)
+                            byId('task14').style.display='block';
+                        else if(json['&main..&uni_obj.&uni_obj_all'].id.length>=6)
+                            byId('ready14').style.display='block';
+                    }
+                    else
+                        byId('empty14').style.display=byId('date14').style.display='block';
+            }
+            break;
+        case 'find_qry':
+            if(json['&main..&uni_obj.&uni_obj_all'])
+                getNFill('edit_obj/'+json['&main..&uni_obj.&uni_obj_all'].id,'edit_obj',prefix);
+            else
+                byId('qry_edit').innerHTML='<div class="alert alert-warning">Пожалуйста, создайте запрос Актуальные задачи в соответствии с <a href="/{_global_.z}/quest/12">подсказками</a></div>';
+            break;
+        case 'edit_obj':
+            var req_row='',buttons='',btn='',ddl='';
+            h=byId('req_row').innerHTML;
+            btn=byId('button').innerHTML;
+            byId('req_row').innerHTML='';
+            if(getBT(t[json['&main..&object'].typ].t)=='report_column'){
+                for(i in json['&main..&object.&editreq_report_column.&rep_col_list'].id)
+                    ddl+=byId('ddl_item').innerHTML.replace(':id:',json['&main..&object.&editreq_report_column.&rep_col_list'].id[i])
+                                                    .replace(':val:',json['&main..&object.&editreq_report_column.&rep_col_list'].val[i])
+                                                    .replace(':selected:',json['&main..&object.&editreq_report_column.&rep_col_list'].selected[i]);
+                byId('value').innerHTML=byId('ddl').innerHTML.replace(':typ:',json['&main..&object'].typ)
+                                                    .replace(':ddl_item:',ddl);
+            }
+            else
+                byId('value').innerHTML=byId('simple').innerHTML.replace(/:typ:/g,json['&main..&object'].typ);
+            byId(prefix+'_edit').innerHTML=byId('edit').innerHTML.replace(/:id:/g,json['&main..&object'].id)
+                                                        .replace(/:typ:/g,json['&main..&object'].typ)
+                                                        .replace(/:typ_name:/g,json['&main..&object'].typ_name)
+                                                        .replace(/:value:/g,json['&main..&object'].val);
+            byId('edit').innerHTML='';
+
+            for(i in r[json['&main..&object'].typ])
+                if(r[json['&main..&object'].typ][i].r!=''){ // Reference
+                    ddl=byId('ddl_item').innerHTML.replace(/:id:|:val:|:selected:/g,'');
+                    while(json['&main..&object.&object_reqs.&editreq_reference.&add_obj_ref_reqs'].r[0]==r[json['&main..&object'].typ][i].i){
+                            ddl+=byId('ddl_item').innerHTML.replace(':id:',json['&main..&object.&object_reqs.&editreq_reference.&add_obj_ref_reqs'].id.shift())
+                                                            .replace(':val:',json['&main..&object.&object_reqs.&editreq_reference.&add_obj_ref_reqs'].val.shift())
+                                                            .replace(':selected:',json['&main..&object.&object_reqs.&editreq_reference.&add_obj_ref_reqs'].selected.shift());
+                            json['&main..&object.&object_reqs.&editreq_reference.&add_obj_ref_reqs'].r.shift();
+                    }
+                    req_row+=h.replace(':req:',t[r[json['&main..&object'].typ][i].t].v)
+                            .replace(':val:',byId('ddl').innerHTML.replace(':typ:',r[json['&main..&object'].typ][i].i)
+                                                                .replace(':ddl_item:',ddl));
+                }
+                else if(r[r[json['&main..&object'].typ][i].t]) // Array
+                	req_row+=h.replace(':req:',t[r[json['&main..&object'].typ][i].t].v)
+                	       .replace(':val:',byId('array').innerHTML)
+                	       .replace(/:typ:/g,r[json['&main..&object'].typ][i].t)
+                	       .replace(':parent:',json['&main..&object'].id)
+                	       .replace(':val:',json['&main..&object.&object_reqs.&editreq_array']['_parent_.arr_num'].shift());
+                else if(getBT(t[r[json['&main..&object'].typ][i].t].t)=='button') // Button
+                	buttons+=btn.replace(':val:',t[r[json['&main..&object'].typ][i].t].v)
+                	            .replace(':attrs:',r[json['&main..&object'].typ][i].a)
+                	            .replace(/\[ID\]/g,json['&main..&object'].id);
+                else if(getBT(t[r[json['&main..&object'].typ][i].t].t)=='boolean') // Boolean
+                	req_row+=h.replace(':req:',t[r[json['&main..&object'].typ][i].t].v)
+                	       .replace(':val:',byId(getBT(t[r[json['&main..&object'].typ][i].t].t)).innerHTML)
+                	       .replace(/:typ:/g,r[json['&main..&object'].typ][i].i)
+                	       .replace(':checked:',json['&main..&object.&object_reqs.&editreq_'+getBT(t[r[json['&main..&object'].typ][i].t].t)]['checked'].shift()==''?'':'checked');
+                else if(byId(getBT(t[r[json['&main..&object'].typ][i].t].t)) && getBT(t[r[json['&main..&object'].typ][i].t].t)) // Another from the templates
+                	req_row+=h.replace(':req:',t[r[json['&main..&object'].typ][i].t].v)
+                	       .replace(':val:',byId(getBT(t[r[json['&main..&object'].typ][i].t].t)).innerHTML)
+                	       .replace(/:typ:/g,r[json['&main..&object'].typ][i].i)
+                	       .replace(':val:',json['&main..&object.&object_reqs.&editreq_'+getBT(t[r[json['&main..&object'].typ][i].t].t)]['val'].shift());
+                else
+                    console.log('not found '+t[r[json['&main..&object'].typ][i].t].t);
+            byId('req_row').innerHTML=req_row;
+            byId('Buttons').innerHTML=buttons;
+            if('{_global_.id}'=='10'){
+                byId('next_act').value='quest/9&';
+                byId('cancel').href='/{_global_.z}/quest/9';
+                byId('confirm_del').innerHTML=byId('confirm_del').innerHTML.replace(/'_m_del\/\d+'/,'\'_m_del/'+json['&main..&object'].id+'?next_act=quest/9%26\'');
+            }
+            if('{_global_.id}'=='13'){
+                byId(28).href=byId(28).href.replace('/{_global_.z}/object/28','/{_global_.z}/quest/14');
+                byId('Buttons').style.display=byId('controls').style.display=byId('delete').style.display='none';
+                byId('form_edit').action='';
+                byId(28).target='';
+            }
+            if('{_global_.id}'=='15'){
+                byId('next_act').value='quest/14&';
+                byId('100').focus();
+                if(json['&main..&object'].val=='Задача -&gt; Дата')
+                    byId('task_date').style.display='block';
+                else if(json['&main..&object'].val=='Задача -&gt; Состояние')
+                    byId('task_filter').style.display='block';
+                else
+                    byId('task_others').style.display='block';
+            }
+            if('{_global_.id}'=='16'){
+                byId('Buttons').innerHTML=byId('Buttons').innerHTML.replace('<a target="_blank" href="/{_global_.z}/report/','<a href="/{_global_.z}/quest/17?rep_id=');
+                byId('next_act').value='quest/16?rep_id='+json['&main..&object'].id+'&';
+            }
+            break;
+        }
+    }
+}
+var tableToExcel = (function() {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = ('<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{'
+        			+ 'worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{'
+        			+ 'table}</table></body></html>')
+        , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))); }
+        , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+    return function(table, name) {
+        if (!table.nodeType) table = document.getElementById(table)
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = uri + base64(format(template, ctx))
+    }
+})()
+function set_cookie(name, value)
+{
+	var date = new Date();
+	date.setTime(date.getTime()+31536000000); // 1 year
+	document.cookie = name+"="+escape(value)+"; expires="+date.toGMTString();
+}
+function get_cookie(name)
+{
+  var results = document.cookie.match ( '(^|;) ?' + name + '=([^;]*)(;|$)' );
+  if(results)
+	return (unescape(results[2]));
+  else
+	return null;
+}
+function delete_cookie(name)
+{
+  var cookie_date=new Date();
+  cookie_date.setTime(cookie_date.getTime()-1);
+  document.cookie=name+"=; expires="+cookie_date.toGMTString();
+}
+function toggle_compact() {
+	if(get_cookie("compact")=="compact") {
+		byId('report_table').classList.remove('table-condensed');
+		delete_cookie("compact");
+	}
+	else {
+		byId('report_table').classList.add('table-condensed');
+		set_cookie("compact","compact" );
+	}
+}
+// Start here
+if(document.documentElement.clientWidth>700)
+    byId('frame').style='margin:20px';
+document.title='Квест, шаг {_global_.id}';
+var i={_global_.id},j,k,id=0,h='';
+var t=new Array();
+var r=new Array();
+var curid=0,cond_id
+	,nullmask=/:!NULL:/i
+	,aliasmask=/:ALIAS=(.+):/i;
+<!-- Begin:&Edit_Typs -->if(t[{ID}]===undefined) t[{ID}]={t:{T},r:"{REF_VAL}",u:{UNIQ},v:"{VAL}"};
+if(0{ORD}){if(r[{ID}]===undefined) r[{ID}]={};r[{ID}]["{ORD}"]={ i:"{REQ_ID}",t:"{REQ_T}",a:"{ATTRS}",r:"{REFT}"};}
+<!-- End:&Edit_Typs -->
+console.log(t);
+console.log(r);
+h=byId(i).innerHTML;
+byId(i).innerHTML='';
+byId('content').innerHTML=h;
+id=document.location.hash.substring(1);
+if(t[id])
+    byId("mytype").innerHTML=t[id].v;
+if(i==1)
+    for(j in t)
+        if(t[j].v=='Задача'){
+            byId('ready1').style.display='block';
+            byId('val1').value='';
+        }
+if(i==2)
+    for(j in t)
+        if(t[j].v=='Срок'){
+            byId('ready2').style.display='block';
+            byId('val2').value='';
+        }
+if(i==3)
+    for(j in t)
+        if(t[j].v=='Файл'){
+            byId('ready3').style.display='block';
+            byId('val3').value='';
+        }
+if(i==4)
+    for(j in t)
+        if(t[j].v=='Состояние' && t[j].r==''){
+            byId('ready4').style.display='block';
+            byId('val4').value='';
+        }
+if(i==5)
+    for(j in t)
+        if(t[j].v=='Состояние' && t[j].r=='')
+            cond_id=j;
+        else if(t[t[j].r])
+            if(t[t[j].r].v=='Состояние'){
+                byId('ready5').style.display='block';
+                byId('makeref').onclick='';
+            }
+if(i==6 || i==8 || i==9 || i==11)
+    top:
+    for(j in t)
+        if(t[j].v=='Задача'){
+            if(i==9){
+//                byId('task_dict').href+=j;
+                getNFill('object/'+j,'object','task');
+            }
+//            else if(i==11)
+//                byId('task_list').href+=j;
+            else
+                drawReqs(j,i);
+            if(i==6){
+                for(k in r[j])
+                    if(t[r[j][k].t].v=='Состояние'&&r[j][k].r==''){
+                        byId('error_cond').style.display='block';
+                        break top;
+                    }
+                    else if(byId(t[r[j][k].t].v))
+                        byId(t[r[j][k].t].v).innerHTML+='&nbsp;<font color="green"><span class="glyphicon glyphicon-ok"></span></font>';
+
+                if(k>=5)
+                    byId('ready6').style.display='block';
+            }
+            break;
+        }
+if(i==7)
+    for(j in t)
+        if(t[j].v=='Состояние'){
+            getNFill('object/'+j,'object','cond');
+            break;
+        }
+if(i==8)
+    for(j in t)
+        if(t[j].v=='Состояние'){
+//            byId('cond_link').href='/{_global_.z}/object/'+j;
+            getNFill('object/'+j,'condition');
+            break;
+        }
+if(i==10)
+    getNFill('edit_obj/'+id,'edit_obj','task');
+if(i==12)
+    for(j in t)
+        if(t[j].v=='Запрос'){
+            getNFill('object/'+j,'object','qry');
+            break;
+        }
+if(i==13)
+    getNFill('object/22/?F_22=Актуальные%20задачи','find_qry','qry');
+<!-- Begin:_Cols -->
+if(i==14)
+    getNFill('object/28/?F_U={_request_.F_U}','object','cols');
+<!-- End:_Cols -->
+if(i==15)
+    getNFill('edit_obj/'+id,'edit_obj','field');
+if(i==16)
+    getNFill('object/22/?F_22=Актуальные%20задачи','find_qry','run_rep');
+<!-- Begin:_Rep -->
+if(i==17)
+    getHTML('report/'+{_request_.rep_id},'draw_rep','rep');
+<!-- End:_Rep -->
+</script>
+<!--************ Templates ************-->
+<div style="display:none;">
+<div id="edit">
+<FORM method="post" id="form_edit" action="/{_global_.z}/_m_save/:id:" ENCTYPE="multipart/form-data" ONSUBMIT="savebtn.disabled = true; return true;">
+<input type="hidden" name="_xsrf" value="{_global_.xsrf}"><input type="hidden" id="next_act" name="next_act" value="">
+<TABLE>
+	<TR><TD>:id: <B>:typ_name::</B></TD>
+	</TR>
+	<TR><TD id="value"></TD>
+	</TR>
+	<TR>
+		<TD>
+		<TABLE class="table table-condensed">
+		<tbody id="req_row">
+		 <TR><TD style=" max-width:400px; " ALIGN="right">:req:: </TD> <TD>:val:</TD>
+		</TR>
+	</tbody>
+		</TABLE>
+		</TD>
+	</TR>
+	<TR>
+		<TD colspan="2">
+		 <div id="Buttons"></div>
+		<TABLE>
+		<TR>
+		<TD>
+			<div id="controls" style="display:inline; ">
+			<input id="savebtn" type="submit" name="savebtn" class="btn btn-primary btn-sm" value="Сохранить">
+			<input type="submit" name="copybtn" class="btn btn-default btn-sm" value="Копия">
+			</div>
+			<div id="delete" style="display:inline; ">
+			<A id="cancel" HREF="/{_global_.z}/{_global_.action}/{_global_.id}"><button type="button" class="btn btn-default btn-sm">Отмена</button></A>
+			<button type="button" class="btn btn-warning btn-sm" onclick="byId('controls').style.display='none'; byId('delete').style.display='none'; byId('confirm_del').style.display='block';">Удалить</button>
+			</div>
+			<div id="confirm_del" style="display:none; border:2px #f0ad4e solid; -moz-border-radius: 10px; -webkit-border-radius:10px; -khtml-border-radius:10px; border-radius:10px; padding:6px; ">
+			<p><b>Подтвердите удаление записи :value:</b></p>
+			<A onclick="post('_m_del/:id:')"><button type="button" class="btn btn-warning btn-sm">Да, удалить</button></A>
+			<button type="button" class="btn btn-default btn-sm" onclick="byId('controls').style.display='inline'; byId('delete').style.display='inline'; byId('confirm_del').style.display='none';"> Отмена </button>
+			</div>
+		</TD>
+		</TR>
+		</TABLE>
+		</TD>
+	</TR>
+</TABLE>
+</FORM>
+</div>
+<div id="simple"><input type="text" name="t:typ:" value=":value:" autofocus class="form-control"><div style="height:5px; "></div>
+</div>
+<div id="ddl_item"><option value=":id:" :selected:>:val:</option>
+</div>
+<div id="ddl">
+<select name="t:typ:" class="form-control input-sm">:ddl_item:
+	</select>
+</div>
+<div id="button">
+<div style="padding-bottom:10px; padding-right:5px; display:inline-block;">
+<A target="_blank" HREF="/{_global_.z}/:attrs:"><button type="button" class="btn btn-default btn-xs">:val:</button></A>
+</div>
+</div>
+<div id="array"><div style="margin:5px;"><A id=":typ:" target="_blank" href="/{_global_.z}/object/:typ:/?F_U=:parent:"><B>(:val:)</B></A></div></div>
+<div id="short"><input class="form-control input-sm" type="text" id=":typ:" name="t:typ:" size="50" value=":val:"></div>
+<div id="memo"><TEXTAREA class="form-control input-sm" id=":typ:" name="t:typ:" COLS=50 ROWS=2>:val:</TEXTAREA></div>
+<div id="html"><TEXTAREA class="form-control input-sm" id=":typ:" name="t:typ:" COLS=50 ROWS=3>:val:</TEXTAREA></div>
+<div id="chars"><input class="form-control input-sm" type="text" id=":typ:" name="t:typ:" size="50" value=":val:"></div>
+<div id="file">:val: <input class="form-control input-sm" type="file" id=":typ:" name="t:typ:" value=""></div>
+<div id="date"><input class="datepicker-here form-control input-sm" type="text" id=":typ:" name="t:typ:" size="10" value=":val:"></div>
+<div id="datetime"><input data-timepicker="true" class="datepicker-here form-control input-sm" type="text" id=":typ:" name="t:typ:" size="18" value=":val:"></div>
+<div id="signed"><input class="form-control input-sm" type="text" id=":typ:" name="t:typ:" size="10" value=":val:"></div>
+<div id="boolean"><div style="margin:5px;"><input type="checkbox" id=":typ:" name="t:typ:" value="1" :checked:/><input type="hidden" name="b:typ:" value="1"></div></div>
+<div id="number"><input class="form-control input-sm" type="text" id=":typ:" name="t:typ:" size="10" value=":val:"></div>
+<div id="pwd"><input class="form-control input-sm" type="password" name="t:typ:" size="20"></div>
+</div>

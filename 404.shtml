@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Вход в Интеграл</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="color:#eeeeee; background-color:#3b8dbd; font-size: 16px;">
+<style>
+    input, select { margin-bottom:5px; }
+    a { cursor: pointer; }
+</style>
+<input type="hidden" id="tzone" name="tzone">
+<div class="container">
+<div class="row">
+    <div class="col-xs-12 col-sm-3 col-lg-4 col-xl-5"> 
+    </div>
+    <div class="col-xs-12 col-sm-6 col-lg-4 col-xl-2">
+    <div class="row" style="margin-left:15px; margin-right:15px; margin-top:5px;">
+        <div class="col-12">
+        <table width="100%">
+            <tr>
+                <td align="right">
+                    <select id="locale" name="locale" class="form-control input-sm" style="width:auto; padding:0;" tabindex="99" onchange="changeLocale(this.value)">
+                		<option id="RU" value="RU">RU</option>
+                		<option id="EN" value="EN">EN</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <FORM id="form" method="post" onsubmit="if(isEmpty(db.value,u.value,p.value))event.preventDefault?event.preventDefault():(event.returnValue=false);">
+        <center><font style="color:#ffffff; font-size:24px;"><span id="name">ИНТЕГРАЛ</span></font>
+        </center>
+        <span id="dbname">База:</span><br />
+        <INPUT class="form-control" TYPE="text" id="db" NAME="db" SIZE="16" MAXLENGTH="16" autofocus oninput="checkLocale(this.value)">
+        <span id="username">Пользователь:</span><br />
+        <INPUT class="form-control" TYPE="text" id="u" NAME="u" SIZE="16" MAXLENGTH="16">
+        <span id="password">Пароль:</span><br />
+        <INPUT class="form-control" TYPE="password" id="p" NAME="p" SIZE="16" MAXLENGTH="16">
+        <center>
+        <label style="margin:20px"><INPUT TYPE="checkbox" NAME="save" VALUE="checked" ><span id="remember"> запомнить пароль</span></label>
+        <br />
+        <INPUT class="btn btn-default" style="margin-bottom:5px;" TYPE="submit" id="btnsubmit" NAME="submit" VALUE="Войти">
+        <INPUT class="btn btn-default" style="margin-bottom:5px;" TYPE="submit" id="btnreset" NAME="reset" VALUE="Сгенерировать пароль" onclick="p.value=' '">
+        <label style="margin:20px"><INPUT TYPE="checkbox" NAME="change" VALUE="checked"  onclick="if(byId('change_pass').style.display=='none') byId('change_pass').style.display='block'; else byId('change_pass').style.display='none';">
+        <span id="change">сменить пароль после входа</span></label>
+        <div id="change_pass" style="display:none;">
+        <span id="newpwd">Новый пароль:</span><br />
+        <INPUT class="form-control" TYPE="password" NAME="npw1" SIZE="16" MAXLENGTH="16">
+        <span id="newpwd2">еще раз:</span><br />
+        <INPUT class="form-control" TYPE="password" NAME="npw2" SIZE="16" MAXLENGTH="16">
+        </div>
+        <br />
+        <!--
+        <script src="//ulogin.ru/js/ulogin.js"></script>
+        <div id="uLogin" data-ulogin="display=panel;theme=classic;fields=first_name,last_name;providers=vkontakte,mailru,facebook,yandex,odnoklassniki,google,instagram;hidden=;redirect_uri=https%3A%2F%2Ftryjob.ru%2Fregister.php;mobilebuttons=0;"></div>
+        <br />
+        -->
+        <a href="#phName" onclick="hideUnHide('form');hideUnHide('regform')"><font color="#00FFFF"><span id="register">Регистрация</span></font></a>
+        </center>
+        </FORM>
+        
+        <form class="form form-horizontal hidden" method="POST" id="regform" action="/register.php">
+        <center><font style="color:#ffffff; font-size:24px;"><span id="reghead">2&nbsp;минуты&nbsp;&mdash; и&nbsp;у&nbsp;вас база и&nbsp;бесплатный урок</span></font>
+        </center>
+        <span id="regname">Ваше имя:</span>
+        <input type="text" class="form-control" name="Name" id="phName" placeholder="Представьтесь, пожалуйста">
+        <span id="reglogin">Login (придумайте имя):</span>
+        <input type="login" class="form-control" name="db" id="phlogin" placeholder="От 3 до 15 символов латиницей">
+        <span id="regpwd">Пароль:</span>
+        <input type="password" class="form-control" name="inputPassword" id="phpwd" placeholder="Не менее 6 символов">
+        <span id="regpwd2">Подтвердите&nbsp;пароль:</span>
+        <input type="password" class="form-control" name="confirmPassword" id="phpwd2" placeholder="Введите пароль ещё раз">
+        <span id="regmail">Email:</span>
+        <input type="email" class="form-control" name="inputEmail" id="phmail" placeholder="На случай, если забудете пароль">
+        <span id="regtel">Телефон:</span>
+        <input type="Phone" class="form-control" name="Phone" id="phtel" placeholder="Введите номер телефона">
+        <span id="regtemplate">Шаблон:</span>
+    	<select class="form-control" id="template" name="template">
+    	    <option value="RU">Русский</option>
+    	    <option value="EN">English</option>
+    	</select>
+        <br />
+        <center>
+        <label><font size="+1" color="salmon">*</font>
+        <input type="checkbox" name="agree"><span id="regoffer">  Я соглашаюсь с <a href="offer.html"><font color="#00FFFF">условиями</font></a> предоставления сервиса Интеграл</span>
+        </label>
+        <br />
+        <input type="submit" class="btn btn-primary" id="btndoreg" style="margin-top:10px;" value="Зарегистрироваться">
+        <br />
+        <br />
+        <a href="#db" onclick="hideUnHide('regform');hideUnHide('form')"><font color="#00FFFF"><span id="login">Я уже зарегистрирован</span></font></a>
+        <br />
+        </center>
+        </form>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript">
+if(document.location.hash=='#phName'){
+    hideUnHide('regform');hideUnHide('form');
+}
+function byId(i){
+    return document.getElementById(i);
+}
+var l=[];
+l['EN']={title:'I d e a V'
+    ,name:'I d e a V'
+    ,dbname:'Database:'
+    ,isempty:'Enter DB name, user name, and password'
+    ,username:'User name:'
+    ,password:'Password:'
+    ,remember:' remember me'
+    ,change:'change password upon login'
+    ,submit:'Log in'
+    ,reset:'Reset password'
+    ,newpwd:'New password:'
+    ,newpwd2:'repeat the password:'
+    ,register:'Register'
+    ,reghead:'Get your&nbsp;own&nbsp;database and&nbsp;a&nbsp;free&nbsp;lesson'
+    ,regname:'Your name:'
+    ,Name:'Enter your name'
+    ,reglogin:'Login:'
+    ,login:'3 to 15 latin characters'
+    ,regpwd:'Password:'
+    ,pwd:'6 characters at least'
+    ,regpwd2:'Confirm the password:'
+    ,pwd2:'Enter the password again'
+    ,regmail:'Email:'
+    ,mail:'In case you forgot the password'
+    ,regtel:'Phone:'
+    ,tel:'Enter your phone number'
+    ,regtemplate:'Template:'
+    ,regoffer:'&nbsp; I accept <a href="https://ideav.pro/offer.html"><font color="#00FFFF">the offer</font></a> of IdeaV'
+    ,doreg:'Register'
+    ,login:'I\'m already registered'
+};
+l['RU']={title:'ИНТЕГРАЛ'
+    ,name:'ИНТЕГРАЛ'
+    ,dbname:'База:'
+    ,isempty:'Введите имя базы, пользователя и пароль'
+    ,username:'Пользователь:'
+    ,password:'Пароль:'
+    ,remember:' запомнить пароль'
+    ,change:'сменить пароль после входа'
+    ,submit:'Войти'
+    ,reset:'Сгенерировать пароль'
+    ,newpwd:'Новый пароль:'
+    ,newpwd2:'еще раз:'
+    ,register:'Регистрация'
+    ,reghead:'2&nbsp;минуты&nbsp;&mdash; и&nbsp;у&nbsp;вас база и&nbsp;бесплатный урок'
+    ,regname:'Ваше имя:'
+    ,Name:'Представьтесь, пожалуйста'
+    ,reglogin:'Login (придумайте имя):'
+    ,login:'От 3 до 15 символов латиницей'
+    ,regpwd:'Пароль:'
+    ,regpwd:'Не менее 6 символов'
+    ,regpwd2:'Подтвердите&nbsp;пароль:'
+    ,regpwd2:'Введите пароль ещё раз'
+    ,regmail:'Email:'
+    ,mail:'На случай, если забудете пароль'
+    ,regtel:'Телефон:'
+    ,tel:'Введите номер телефона'
+    ,regtemplate:'Шаблон:'
+    ,regoffer:'&nbsp; Я соглашаюсь с <a href="offer.html"><font color="#00FFFF">условиями</font></a> предоставления сервиса Интеграл'
+    ,doreg:'Зарегистрироваться'
+    ,login:'Я уже зарегистрирован'
+};
+if(navigator.languages && navigator.languages.length)
+    lang = navigator.languages[0]
+else if (navigator.userLanguage)
+    lang = navigator.userLanguage
+else
+    lang = navigator.language
+if(lang.toUpperCase().indexOf('RU')==-1)
+    byId('locale').value=locale='EN';
+else
+    byId('locale').value=locale='RU';
+function localize(){
+    for(i in l[locale])
+        if(byId(i))
+            byId(i).innerHTML=l[locale][i];
+        else if(byId('btn'+i))
+            byId('btn'+i).value=l[locale][i];
+        else if(byId('ph'+i))
+            byId('ph'+i).placeholder=l[locale][i];
+        else if(i==='title')
+            document.title=l[locale][i];
+}
+localize();
+function changeLocale(loc){
+    byId('template').value=locale=loc;
+    localize();
+}
+function isEmpty(db,u,p){
+	if(db.length*u.length*p.length==0){
+		alert(l[locale]['isempty']);
+		return true;
+	}
+	byId('form').action = '/'+byId('db').value+'/auth';
+	byId('tzone').value = Math.round(new Date().getTime()/1000)-new Date().getTimezoneOffset()*60;
+}
+function checkLocale(k){
+    var match=document.cookie.match(new RegExp('(^| )'+k+'_locale=([^;]+)'));
+    if(match)
+        byId('locale').value=locale=match[2];  // The locale was found
+    else
+        byId('locale').value=locale='RU'; // Use RU by default
+}
+function hideUnHide(i){
+    if(byId(i).classList.contains('hidden'))
+        byId(i).classList.remove('hidden');
+    else
+        byId(i).className+=' hidden';
+}
+</script>
+</body>
+</html>

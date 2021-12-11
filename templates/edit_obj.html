@@ -1,0 +1,257 @@
+<!-- Begin:&Warnings --><div class="alert alert-danger" role="alert">{WARNING}</div>
+<!-- End:&Warnings -->
+<!-- Begin:_Msg --><div class="alert alert-{_request_.LEVEL}" role="alert">{_request_.TEXT}</div>
+<!-- End:_Msg -->
+<div class="container">
+<!-- Begin:&Object -->
+<script>
+var enable_save;
+</script>
+<div class="row">
+<div class="col-12 col-lg-10 col-xl-8">
+<div id="messages"></div>
+<FORM id="form" method="post" action="/{_global_.z}/_m_save/{ID}" ENCTYPE="multipart/form-data" ONSUBMIT="savebtn.disabled = true; return true;">
+<input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+<TABLE class="t9n" width="100%">
+	<TR>
+		<TD>{ID}&nbsp;&nbsp;&nbsp;&nbsp;<B>{TYP_NAME}:</B>
+			<!-- Begin:_Tab --><input type="hidden" name="tab" value="{_request_.tab}">
+			<!-- End:_Tab -->
+			<!-- Begin:_Next --><input id="next_act" type="hidden" name="next_act" value="{_request_.next_act}">
+			<!-- End:_Next -->
+		</TD>
+	</TR>
+	<TR>
+		<TD><!-- Begin:&Edit_Req --><div class="row"><div class="col-12"><input type="{TYPE}" id="t{TYP}" name="t{TYP}" value="{_parent_.VAL}" {_parent_.DISABLED} class="form-control"></div></div>
+			<!-- End:&Edit_Req -->
+			<!-- Begin:&EditReq_REPORT_COLUMN -->
+				<select id="t{TYP}" name="t{TYP}" {_parent_.DISABLED} class="form-control">
+					<!-- Begin:&Rep_Col_List --><option value="{ID}" {SELECTED}>{VAL}</option>
+					<!-- End:&Rep_Col_List -->
+				</select>
+				<script>
+				    $(document).ready(function(){
+				        $("input[name='t100']").each(function(){
+                           if($(this).val()=="")
+                              $(this).val($( "#t{TYP} option:selected" ).text())
+                         });
+				    });
+				</script>
+			<!-- End:&EditReq_REPORT_COLUMN -->
+			<!-- Begin:&EditReq_GRANT -->
+				<select id="t{TYP}" name="t{TYP}" {_parent_.DISABLED} class="form-control">
+					<!-- Begin:&Grant_List --><option value="{ID}" {SELECTED}>{VAL}</option>
+					<!-- End:&Grant_List -->
+				</select>
+			<!-- End:&EditReq_GRANT -->
+			<div style="height:5px; "></div>
+		</TD>
+	</TR>
+	<TR><TD id="tabs">
+	<ul class="nav tab-tabs" >
+		<!-- Begin:&Tabs --><li class="tab-item"><a {CLASS} href="/{_global_.z}/edit_obj/{_parent_.id}/?tab={TAB}">{VAL}</a></li>
+		<!-- End:&Tabs -->
+	</ul>
+	</TD></TR>
+	<TR>
+		<TD>
+		<div class="form-row no-gutters">
+		<!-- Begin:&Object_Reqs -->
+			<label for="t{TYP}"> <!-- class="col-12 col-sm-3 col-md-2" -->
+				<!-- Begin:&Nullable_Req --><A TITLE="<t9n>[RU]Обязательный реквизит![EN]Mandatory attribute!</t9n>" NAME="{NOT_NULL}"><FONT COLOR="RED"><b>
+				<!-- End:&Nullable_Req -->
+				{TYP_NAME}
+				<!-- Begin:&Nullable_Req_close --><!--{NOT_NULL}--></b></FONT></A>
+				<!-- End:&Nullable_Req_close -->
+			</label>
+			<!-- Begin:&EditReq_REFERENCE -->
+			<div class="col-12 col-sm-8 col-md-6">
+				<div class="form-group" style="display: flex; margin-bottom: 0">
+				    <select id="t{TYP}" name="t{TYP}" {DISABLED} class="form-control">
+    				    <option> </option>
+        				<!-- Begin:&Add_Obj_Ref_Reqs --><option value="{ID}" {SELECTED} r="{R}">{VAL}</option>
+        				<!-- End:&Add_Obj_Ref_Reqs -->
+        				</select>
+    				<!-- Begin:&Seek_Refs --><input class="form-control" type="text" name="SEARCH_{_parent_.TYP}" value="{SEARCH}"><input type="hidden" name="PREV_SEARCH_{_parent_.TYP}" value="{SEARCH}"><!-- End:&Seek_Refs -->
+    				<!-- Begin:&Ref_Create_Granted -->
+				    <div class="input-group-append" style="display: inline-block; float: left;">
+				        <a id="p{TYP}" onclick="byId('NEW_{TYP}').style.display='block'; this.style.display='none'; byId('m{TYP}').style.display='block'; byId('NEW_{TYP}').focus();">
+    					<button type="button" class="btn btn-outline-secondary">+</button></a>
+    					<a id="m{TYP}" onclick="this.style.display='none'; byId('p{TYP}').style.display='inline-block'; byId('NEW_{TYP}').style.display='none'; byId('NEW_{TYP}').value=''" style="display:none; ">
+					<button type="button" class="btn btn-outline-secondary">&mdash;</button></a>
+				    </div>
+				    <input class="form-control" type="text" id="NEW_{TYP}" name="NEW_{TYP}" placeholder="<t9n>[RU]Добавить[EN]Add</t9n> '{_parent_.TYP_NAME}'" style="display:none; ">
+				<!-- End:&Ref_Create_Granted -->
+    		    </div>
+		    </div>
+			<!-- End:&EditReq_REFERENCE -->
+			<!-- Begin:&EditReq_ARRAY -->
+			<div class="col-6 col-sm-4 col-md-3">
+			    <A href="/{_global_.z}/object/{TYP}/?F_U={_parent_.ID}"><B>({_parent_.ARR_NUM})</B></A>
+				<!-- Begin:&ARRAY_val --> <input class="form-control" type="text" name="t{_parent_.TYP}" value="{VAL}"><!-- End:&ARRAY_val -->
+		    </div>
+			<!-- End:&EditReq_ARRAY -->
+			<!-- Begin:&EditReq_SHORT -->
+			<div class="col-12 col-sm-4 col-md-3">
+                <input class="form-control" type="text" id="t{TYP}" name="t{TYP}" value="{VAL}" id="t{TYP}" {DISABLED}>
+		    </div>
+			<!-- End:&EditReq_SHORT -->
+			<!-- Begin:&EditReq_MEMO -->
+			<div class="col-12">
+			    <TEXTAREA class="form-control" id="t{TYP}" name="t{TYP}" {DISABLED}>{VAL}</TEXTAREA>
+		    </div>
+			<!-- End:&EditReq_MEMO -->
+			<!-- Begin:&EditReq_HTML -->
+			<div class="col-12">
+    			<TEXTAREA class="form-control" id="t{TYP}" name="t{TYP}" {DISABLED}>{VAL}</TEXTAREA>
+		    </div>
+			<!-- End:&EditReq_HTML -->
+			<!-- Begin:&EditReq_CHARS -->
+			<div class="col-12">
+    			<input class="form-control" type="text" id="t{TYP}" name="t{TYP}" value="{VAL}" {DISABLED}>
+		    </div>
+			<!-- End:&EditReq_CHARS -->
+			<!-- Begin:&EditReq_FILE -->
+			<div class="col-12 col-sm-9 col-md-6">
+    			{VAL} <input class="form-control-file" type="file" id="t{TYP}" name="t{TYP}" value="">
+		    </div>
+			<!-- End:&EditReq_FILE -->
+			<!-- Begin:&EditReq_DATE -->
+			<div class="col-6 col-sm-4 col-md-3">
+    			<input class="form-control datepicker" type="date" id="t{TYP}" name="t{TYP}" value="{VAL}" {DISABLED}>
+		    </div>
+			<!-- End:&EditReq_DATE -->
+			<!-- Begin:&EditReq_DATETIME -->
+			<div class="col-6 col-sm-5 col-md-4">
+    			<input class="form-control" type="DDDdatetime-local" id="t{TYP}" name="t{TYP}" data="DATETIME" value="{VAL}" {DISABLED}>
+		    </div>
+			<!-- End:&EditReq_DATETIME -->
+			<!-- Begin:&EditReq_SIGNED -->
+			<div class="col-6 col-sm-4 col-md-3">
+    			<input class="form-control" type="text" id="t{TYP}" name="t{TYP}" value="{VAL}" {DISABLED}>
+		    </div>
+			<!-- End:&EditReq_SIGNED -->
+			<!-- Begin:&EditReq_BOOLEAN -->
+			<div class="col-6 col-sm-4 col-md-3">
+    			<input class="form-control" type="checkbox" id="t{TYP}" name="t{TYP}" value="1" {CHECKED} {DISABLED}/><input type="hidden" name="b{TYP}" value="1">
+		    </div>
+			<!-- End:&EditReq_BOOLEAN -->
+			<!-- Begin:&EditReq_NUMBER -->
+			<div class="col-6 col-sm-4 col-md-3">
+    			<input class="form-control" type="text" id="t{TYP}" name="t{TYP}" value="{VAL}" {DISABLED}>
+		    </div>
+			<!-- End:&EditReq_NUMBER -->
+			<!-- Begin:&EditReq_CALCULATABLE -->
+			<div class="col-12 col-sm-9 col-md-10">
+    			{VAL}
+		    </div>
+			<!-- End:&EditReq_CALCULATABLE -->
+			<!-- Begin:&EditReq_PWD -->
+			<div class="col-6 col-sm-4 col-md-3">
+    			<input type="text" class="form-control" value={VAL} readonly/>
+		    </div>
+			<!-- End:&EditReq_PWD -->
+		{ENABLE_SAVE}
+		<!-- End:&Object_Reqs -->
+		</div>
+		</TD>
+	</TR>
+	<TR>
+		<TD id="buttons" class="pt-3 pb-2">
+		<!-- Begin:&Buttons --><A HREF="/{_global_.z}/{ATTRS}"><button type="button" class="btn btn-secondary btn-sm mb-1 mr-1">{VAL}</button></A>
+		<!-- End:&Buttons -->
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<div id="controls" style="display:inline; ">
+			<input {DISABLED} id="savebtn" type="submit" name="savebtn" class="btn btn-primary mb-1" value="<t9n>[RU]Сохранить[EN]Save</t9n>">
+			<input {DISABLED} type="submit" id="copybtn" name="copybtn" class="btn btn-outline-secondary mb-1" value="<t9n>[RU]Дублировать[EN]Duplicate</t9n>">
+			</div>
+			<div id="delete" style="display:inline; ">
+			<A id="cancel" HREF="/{_global_.z}/object/{TYP}/?F_U={UP}&F_I={ID}"><button type="button" class="btn btn-outline-secondary mb-1"><t9n>[RU]Отменить[EN]Cancel</t9n></button></A>
+			<button {DISABLED} id="delete_btn" type="button" class="btn btn-warning mb-1" onclick="byId('controls').style.display='none'; byId('delete').style.display='none'; byId('confirm_del').style.display='block';"><t9n>[RU]Удалить[EN]Delete</t9n></button>
+			</div>
+			<div id="confirm_del" style="display:none; border:2px #f0ad4e solid; -moz-border-radius: 10px; -webkit-border-radius:10px; -khtml-border-radius:10px; border-radius:10px; padding:6px; ">
+			<p><b><t9n>[RU]Подтвердите удаление записи[EN]Confirm to delete</t9n> {VAL}</b></p>
+			<A onclick="post('_m_del/{ID}')"><button type="button" class="btn btn-warning mb-1"><t9n>[RU]Да, удалить[EN]Yes, delete</t9n></button></A>
+			<button type="button" class="btn btn-outline-secondary mb-1" onclick="byId('controls').style.display='inline'; byId('delete').style.display='inline'; byId('confirm_del').style.display='none';">&nbsp;<t9n>[RU]Отмена[EN]Cancel</t9n>&nbsp;</button>
+			</div>
+		</TD>
+	</TR>
+	<TR>
+		<TD id="extras"> 
+		</TD>
+	</TR>
+</TABLE>
+</FORM>
+</div>
+</div>
+<script>
+if(enable_save!==undefined)
+    byId('savebtn').disabled=false;
+
+var type={TYP},typeName='{TYP_NAME}',up={UP};
+$(document).ready(function(){
+    $('#t{TYP}').focus();
+});
+
+let style = document.createElement('style')
+    style.innerHTML = `
+       label {
+            display: inline;
+            margin-top: .5rem;
+            margin-bottom: 0;
+        }
+        input[type=checkbox] {
+            width: 38px;
+        }
+        div[class^="col-"] {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+    `
+    document.getElementsByTagName('head')[0].appendChild(style)
+    let labels = [], formGroups = [];
+    document.addEventListener('DOMContentLoaded', function() {
+        let formContainer = document.querySelector('.no-gutters');
+        formContainer.childNodes.forEach(child => {
+            if (!(child instanceof Text)) {
+                if (child.nodeName === 'LABEL') {
+                    labels.push(child)
+                } else {
+                    formGroups.push(child)
+                }
+            }
+        })
+        formGroups.forEach((group, i) => {
+            /*
+            if (group.childNodes[1] && group.childNodes[1].type === 'date') {
+                group.childNodes[1].valueAsDate = moment.utc(group.childNodes[1].getAttribute('value'), 'DD.MM.YYYY').toDate()
+                group.childNodes[1].onchange = (e) => {
+                    console.log(e.target.value)
+                }
+            }
+            */
+            if (group.childNodes[1] && group.childNodes[1].type === 'datetime-local' && group.childNodes[1].getAttribute('data')) {
+                group.childNodes[1].valueAsNumber = moment.utc(group.childNodes[1].getAttribute('value'), 'DD.MM.YYYY hh:mm:ss').valueOf();
+                group.childNodes[1].onchange = (e) => {
+                    console.log(e.target.value)
+                }
+            }
+            
+            if (group.childNodes[1] && group.childNodes[1].type !== 'checkbox1') {
+                group.insertBefore(labels[i], group.childNodes[1])
+            } else {
+                group.appendChild(labels[i])
+                group.style.display = 'block'
+            }
+        })
+    }, false);
+    $('input[type="date"]').each(function(){
+    	$(this).attr('value',$(this).attr('value').replace(/(\d\d).(\d\d).(\d\d\d\d)/,'$3-$2-$1'))
+    });
+</script>
+<!-- End:&Object -->
+</div>

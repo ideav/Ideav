@@ -1,0 +1,150 @@
+<div>Скрипт этой страницы отправляет на сервер данные для добавления случайных пользователей, замеряя быстродействие.</div>
+<div>В таблице <a target="users" href="/{_global_.z}/object/18">пользователей</a> <b>сейчас столько записей: <div style="display:inline;" id="total">113</div></b>, а скрипт имитирует, что сотни людей одновременно добавляют туда новые данные.</div>
+<p><a style="border-bottom: 1px dotted" onclick="$('#query').toggle()">Сделать произвольные выборки данных</a></p>
+<div id="query">
+<div id="tabs">
+	<ul class="nav tab-tabs">
+		<li class="tab-item"><a class="tab-link perf-tab" onclick="$('.perf-tab').removeClass('active');$(this).addClass('active');$('.perf-tabs').hide();$('#filter').show()">Фильтр на таблице</a></li>
+		<li class="tab-item"><a class="tab-link perf-tab" onclick="$('.perf-tab').removeClass('active');$(this).addClass('active');$('.perf-tabs').hide();$('#report').show()" >Запросы с агрегацией</a></li>
+	</ul>
+</div>
+<div id="filter" class="perf-tabs" style="display:none;">
+    Вы можете делать выборки с фильтром по любому полю и наблюдать как они отрабатывают. Будет заметна небольшая разница, если вы делаете выборки во время массовой вставки данных или по её окончании.
+    <p><b>Обратите внимание, насколько быстро система отрабатывает запросы типа &laquo;начинается&raquo;, &laquo;дата&raquo; и &laquo;диапазон&raquo; &mdash; в этом случае применяется индекс, а в Интеграле проиндексировано всё.</b></p>
+    <table class="table">
+        <tr><th>Поле</th><th>Значение</th><th>Фильтр</th>
+        </tr>
+        <tr><td>Пользователь</td><td><input id="18" class="form-control" type="text" value="Oleg"></td>
+            <td>&nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?F_18='+byId('18').value+'%25'">Начинается</a>
+                &nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?F_18=%25'+byId('18').value+'%25'">Содержит</a>
+            </td>
+        </tr>
+        <tr><td>Email</td>
+            <td><input id="41" class="form-control" type="text" value="Dima"></td>
+            <td>&nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?F_41='+byId('41').value+'%25'">Начинается</a>
+                &nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?F_41=%25'+byId('41').value+'%25'">Содержит</a>
+            </td>
+        </tr>
+        <tr><td>Телефон</td>
+            <td><input id="30" class="form-control" type="text" value="89163"></td>
+            <td>&nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?F_30='+byId('30').value+'%25'">Начинается</a>
+                &nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?F_30=%25'+byId('30').value+'%25'">Содержит</a>
+            </td>
+        </tr>
+        <tr><td>Дата</td>
+            <td><input id="156f" class="form-control" type="text" value="3.11.1975">
+                <input id="156t" class="form-control" type="text" value="28.11.1975"></td>
+            <td>&nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?FR_156='+byId('156f').value">Первая дата</a>
+                &nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?FR_156='+byId('156t').value">Вторая дата</a>
+                &nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?FR_156='+byId('156f').value+'&TO_156='+byId('156t').value">Диапазон</a>
+            </td>
+        </tr>
+        <tr><td>Имя</td>
+            <td><input id="33" class="form-control" type="text" value="Gay"></td>
+            <td>&nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?F_33='+byId('33').value+'%25'">Начинается</a>
+                &nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?F_33=%25'+byId('33').value+'%25'">Содержит</a>
+                &nbsp;&nbsp;<a target="user" href="" style="border-bottom: 1px dotted" onclick="this.href='/{_global_.z}/object/18/?F_33=%25'+byId('33').value">Заканчивается</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="report" class="perf-tabs" style="display:none;">
+    <p>В системе созданы отчеты, обрабатывающие <b>весь массив пользователей</b>. Вы можете посмотреть сам отчёт и как он запрограммирован в конструкторе (серая ссылка):</p>
+    <ul>
+        <li><a target="qry1" href="/{_global_.z}/report/326">Общее количество пользователей</a> <a target="qry1" style="color:gray" href="/{_global_.z}/sql/326">(конструктор)</a></li>
+        <li><a target="qry2" href="/{_global_.z}/report/316">Пользователи с одинаковыми email</a></li> <a target="qry2" style="color:gray" href="/{_global_.z}/sql/316">(конструктор)</a></li>
+        <li><a target="qry3" href="/{_global_.z}/report/301">Первая буква имени (кликабельно)</a></li> <a target="qry3" style="color:gray" href="/{_global_.z}/sql/301">(конструктор)</a></li>
+        <li><a target="qry4" href="/{_global_.z}/report/20728461">Пользователи с дублированными телефонами</a></li> <a target="qry4" style="color:gray" href="/{_global_.z}/sql/20728461">(конструктор)</a></li>
+    </ul>
+</div>
+<br>
+</div>
+<div>Нажмите кнопку, и мы вставим <span id="batch"></span> записей &mdash; одну за одной.</div>
+<button class="btn btn-primary btn-sm m-2" onclick="$(this).hide();start=new Date().getTime();begin=new Date().getTime();doInsert()">Сгенерировать записи</button>
+<p>В панели отладки браузера вы можете наблюдать запросы, отправляемые на сервер, и его ответы в JSON. Сервер отрабатывает получение запроса, проверку прав, уникальность имени пользователя и создание записи о нём.</p>
+<p>Параметры виртуального сервера на Intel Xeon E5-2630v3: <b>1 ядро 2.4ГГц, RAM 1ГБ</b></p>
+
+
+<div id="frame"></div>
+<div>
+    Измените количество потоков и увидите, как меняется время отклика при изменении нагрузки:&nbsp;
+    <a style="border-bottom: 1px dotted" onclick="sessionsLimit=0;doInsert()">0</a>&nbsp;&nbsp;
+    <a style="border-bottom: 1px dotted" onclick="sessionsLimit=1;doInsert()">1</a>&nbsp;&nbsp;
+    <a style="border-bottom: 1px dotted" onclick="sessionsLimit=3;doInsert()">3</a>&nbsp;&nbsp;
+    <a style="border-bottom: 1px dotted" onclick="sessionsLimit=5;doInsert()">5</a>&nbsp;&nbsp;
+    <a style="border-bottom: 1px dotted" onclick="sessionsLimit=10;doInsert()">10</a>&nbsp;&nbsp;
+    <a style="border-bottom: 1px dotted" onclick="sessionsLimit=20;doInsert()">20</a>&nbsp;&nbsp;
+    <a style="border-bottom: 1px dotted" onclick="sessionsLimit=50;doInsert()">50</a>&nbsp;&nbsp;
+    <a style="border-bottom: 1px dotted" onclick="if(sessionsLimit>5)sessionsLimit-=5;doInsert()">-5</a>&nbsp;&nbsp;
+    <a style="border-bottom: 1px dotted" onclick="sessionsLimit+=5;doInsert()">+5</a>&nbsp;&nbsp;
+    <br /><font size="-1">При увеличении количества потоков, очередь начинает затормаживать сервер &mdash; экспериментально можно подобрать оптимальное значение для отклика и скорости. В данном примере это будет около 20 потоков.</font>
+</div>
+<div id="timing"></div>
+<script>
+// Функция для отправки асинхронного запроса по https api с обработкой его результата
+function intApi(m,u,b,vars,index){ // Параметры: метод, адрес, действие - ветка switch, параметры, ID целевого элемента
+    vars=vars||''; // По умолчанию список параметров пуст
+    var h='',i,j,json,obj=new XMLHttpRequest(); // Объявляем переменную под JSON и API по HTTPS
+    obj.open(m,'/'+db+'/'+u,true); // Открываем асинхронное соединение заданным методом по нужному адресу
+    if(m=='POST'){ // Если это POST запрос, то передаем заданные параметры
+        obj.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        vars='_xsrf='+xsrf+'&'+vars; // добавляем токен xsrf, необходимый для POST-запроса
+    }
+    obj.onload=function(e){ // Когда запрос вернет результат - сработает эта функция
+        if(b=='insert')
+            sessions--;
+        try{ // в this.responseText лежит ответ от сервера
+            json=JSON.parse(this.responseText); // Пытаемся разобрать ответ как JSON
+        }
+        catch(e){ // Если произошла ошибка при разборе JSON
+            console.log(e); // то выводим детали этой ошибки в консоль браузера
+            console.log(this.responseText);
+        }
+        obj.abort(); // Закрываем соединение
+        var data=json.data;
+        switch(b){ // Отрабатываем заданную команду - переходим в соответствующую ветку case
+            
+            case 'total':
+                clearInterval(timerId);
+                $('#total').html(json.data[0].toString().replace(/\B(?=(\d{3,3})+(?!\d))/g, " "));
+                break;
+                
+            case 'insert':
+                doInsert();
+                inserted++;
+                xhrAvg=(xhrAvg*xhrCount+(new Date().getTime() - index))/(xhrCount+1);
+                if(xhrCount<200)
+                    xhrCount++;
+                $('#frame').html('Потоки: '+sessions+', максимум: <b>'+sessionsLimit+'</b>'
+                                +'<br>(это как если бы одновременно очень активно работали от '+(sessionsLimit*10)+' до '+Math.max((Math.round(100/((new Date().getTime() - begin)/inserted))*100),(sessionsLimit*20))+' чел.)'
+                                +'<br><br>Прошло: '+Math.round((new Date().getTime() - begin)/1000)+' сек'
+                                +'<br>Отправлено записей: '+inserts+', вставлено: '+inserted+' &mdash; <b>'+Math.round(1000/((new Date().getTime() - begin)/inserted))+' в секунду</b> в среднем'
+                                +'<br>Время отклика, среднее: <b>'+Math.round(xhrAvg)+' мс</b> &mdash; столько пользователь ждёт отработку запроса');
+                if(inserted/insertMeasure==Math.round(inserted/insertMeasure)){
+                    $('#timing').html($('#timing').html()+'<br> '+Math.round((new Date().getTime() - start)/insertMeasure)+' мс/запись, '+Math.round(1000/((new Date().getTime() - start)/insertMeasure))+' в секунду, отклик '+Math.round(xhrAvg)+' мс, потоков: '+sessionsLimit);
+                    start=new Date().getTime();
+                }
+                break;
+                
+        }
+    }
+    obj.send(vars); // отправили запрос и теперь будем ждать ответ, а пока - выходим
+}
+$('#query').hide();
+intApi('GET','report/326?JSON','total');
+var inserts=0,insertsLimit=1000000,inserted=0,sessions=0,sessionsLimit=10,insertMeasure=10000,start,begin,xhrAvg=0,xhrCount=0;
+$('#timing').html('<br>Средняя скорость вставки '+insertMeasure+' записей: ');
+$('#batch').html(insertsLimit);
+function doInsert(){
+    if(start)
+    while(sessions<sessionsLimit&&inserts<insertsLimit){
+        inserts++;
+        sessions++;
+        intApi('POST','_m_new/18?JSON&up=1&t156='+Math.round(Math.random()*28)+'.'+Math.round(Math.random()*12)+'.'+Math.round(1961+Math.random()*40)+'&t115=164&t124=[NOW]','insert'
+            ,'t30=89'+Math.random().toString().substring(2,11)+'&t33='+Math.random().toString(36).replace(/[^a-z]+/g, '')+'&t41='+Math.random().toString(36).replace(/[^a-z]+/g, '')+'@gmail.com&t18='+Math.random().toString(36).replace(/[^a-z]+/g, '')+Math.random().toString().substring(2,5)
+                    ,new Date().getTime());
+    }
+}
+var timerId = setInterval(() => $('#total').html(Number.parseInt($('#total').html())+17703), 100);
+</script>
+<br><a href="/{_global_.z}/">Запустить заново</a>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Вход в Интеграл</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="color:#eeeeee; background-color:#3b8dbd; font-size: 16px;">
+<style>
+    input, select { margin-bottom:5px; }
+    a { cursor: pointer; }
+</style>
+<center><div id="message" style="display:none;"></div>
+</center>
+<input type="hidden" id="tzone" name="tzone">
+<div class="container">
+<div class="row">
+    <div class="col-xs-12 col-sm-3 col-lg-4 col-xl-5"> 
+    </div>
+    <div class="col-xs-12 col-sm-6 col-lg-4 col-xl-2">
+    <div class="row" style="margin-left:15px; margin-right:15px; margin-top:5px;">
+        <div class="col-12">
+        <table width="100%">
+            <tr>
+                <td align="right">
+                    <select id="locale" name="locale" class="form-control input-sm" style="width:auto; padding:0;" tabindex="99" onchange="changeLocale(this.value)">
+                		<option id="RU" value="RU">RU</option>
+                		<option id="EN" value="EN">EN</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <FORM id="form" method="post" onsubmit="if(isEmpty(db.value,u.value,p.value))event.preventDefault?event.preventDefault():(event.returnValue=false);">
+        <INPUT id="loginlocale" TYPE="hidden" NAME="locale" value="RU">
+        <!-- Begin:_uri -->
+        <INPUT TYPE="hidden" NAME="uri" VALUE="{_global_.uri}">
+        <!-- End:_uri -->
+        <center><font style="color:#ffffff; font-size:24px;"><span id="name">ИНТЕГРАЛ</span></font>
+        </center>
+        <span id="dbname">База:</span><br />
+        <INPUT class="form-control" TYPE="text" id="db" NAME="db" SIZE="16" MAXLENGTH="16" autofocus oninput="if(autoLocale)checkLocale(this.value)">
+        <span id="username">Пользователь:</span><br />
+        <INPUT class="form-control" TYPE="text" id="u" NAME="u" SIZE="16" MAXLENGTH="16">
+        <span id="password">Пароль:</span><br />
+        <INPUT class="form-control" TYPE="password" id="p" NAME="p" SIZE="16" MAXLENGTH="16">
+        <center>
+        <label style="margin:20px"><INPUT TYPE="checkbox" NAME="save" VALUE="checked" ><span id="remember"> запомнить пароль</span></label>
+        <br />
+        <INPUT class="btn btn-default" style="margin-bottom:5px;" TYPE="submit" id="btnsubmit" NAME="submit" VALUE="Войти">
+        <INPUT class="btn btn-default" style="margin-bottom:5px;" TYPE="submit" id="btnreset" NAME="reset" VALUE="Сгенерировать пароль" onclick="p.value=' '">
+        <label style="margin:20px"><INPUT TYPE="checkbox" NAME="change" VALUE="checked"  onclick="if(byId('change_pass').style.display=='none') byId('change_pass').style.display='block'; else byId('change_pass').style.display='none';">
+        <span id="change">сменить пароль после входа</span></label>
+        <div id="change_pass" style="display:none;">
+        <span id="newpwd">Новый пароль:</span><br />
+        <INPUT class="form-control" TYPE="password" NAME="npw1" SIZE="16" MAXLENGTH="16">
+        <span id="newpwd2">еще раз:</span><br />
+        <INPUT class="form-control" TYPE="password" NAME="npw2" SIZE="16" MAXLENGTH="16">
+        </div>
+        <br />
+        <a href="/login.html#phName" onclick="hideUnHide('form');hideUnHide('regform')"><font color="#00FFFF"><span id="register">Регистрация</span></font></a>
+        </center>
+        </FORM>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript">
+<!-- Begin:_db -->
+    byId('db').value='{_global_.z}';
+    byId('db').focus();
+<!-- End:_db -->
+<!-- Begin:_u -->
+    byId('u').value='{_global_.user}';
+    byId('u').focus();
+<!-- End:_u -->
+if(document.location.hash=='#phName'){
+    hideUnHide('regform');hideUnHide('form');
+}
+function byId(i){
+    return document.getElementById(i);
+}
+var l=[];
+l['EN']={title:'I d e a V'
+    ,name:'I d e a V'
+    ,dbname:'Database:'
+    ,isempty:'Enter DB name, user name, and password'
+    ,username:'User name:'
+    ,password:'Password:'
+    ,remember:' remember me'
+    ,change:'change password upon login'
+    ,submit:'Log in'
+    ,reset:'Reset password'
+    ,newpwd:'New password:'
+    ,newpwd2:'repeat the password:'
+    ,register:'Register'
+    ,reghead:'Get your&nbsp;own&nbsp;database and&nbsp;a&nbsp;free&nbsp;lesson'
+    ,regname:'Your name:'
+    ,Name:'Enter your name'
+    ,reglogin:'Login:'
+    ,login:'3 to 15 latin characters'
+    ,regpwd:'Password:'
+    ,pwd:'6 characters at least'
+    ,regpwd2:'Confirm the password:'
+    ,pwd2:'Enter the password again'
+    ,regmail:'Email:'
+    ,mail:'In case you forgot the password'
+    ,regtel:'Phone:'
+    ,tel:'Enter your phone number'
+    ,regtemplate:'Template:'
+    ,regoffer:'&nbsp; I accept <a href="https://ideav.pro/offer.html"><font color="#00FFFF">the offer</font></a> of IdeaV'
+    ,doreg:'Register'
+    ,login:'I\'m already registered'
+    ,exists:'This user name already taken'
+};
+l['RU']={title:'ИНТЕГРАЛ'
+    ,name:'ИНТЕГРАЛ'
+    ,dbname:'База:'
+    ,isempty:'Введите имя базы, пользователя и пароль'
+    ,username:'Пользователь:'
+    ,password:'Пароль:'
+    ,remember:' запомнить пароль'
+    ,change:'сменить пароль после входа'
+    ,submit:'Войти'
+    ,reset:'Сгенерировать пароль'
+    ,newpwd:'Новый пароль:'
+    ,newpwd2:'еще раз:'
+    ,register:'Регистрация'
+    ,reghead:'2&nbsp;минуты&nbsp;&mdash; и&nbsp;у&nbsp;вас база и&nbsp;бесплатный урок'
+    ,regname:'Ваше имя:'
+    ,Name:'Представьтесь, пожалуйста'
+    ,reglogin:'Login (придумайте имя):'
+    ,login:'От 3 до 15 символов латиницей'
+    ,regpwd:'Пароль:'
+    ,regpwd:'Не менее 6 символов'
+    ,regpwd2:'Подтвердите&nbsp;пароль:'
+    ,regpwd2:'Введите пароль ещё раз'
+    ,regmail:'Email:'
+    ,mail:'На случай, если забудете пароль'
+    ,regtel:'Телефон:'
+    ,tel:'Введите номер телефона'
+    ,regtemplate:'Шаблон:'
+    ,regoffer:'&nbsp; Я соглашаюсь с <a href="offer.html"><font color="#00FFFF">условиями</font></a> предоставления сервиса Интеграл'
+    ,doreg:'Зарегистрироваться'
+    ,login:'Я уже зарегистрирован'
+    ,exists:'Это имя пользователя уже занято'
+};
+if(document.location.search.indexOf('locale=EN')!=-1)
+    lang = 'EN';
+else if(navigator.languages && navigator.languages.length)
+    lang = navigator.languages[0];
+else if (navigator.userLanguage)
+    lang = navigator.userLanguage;
+else
+    lang = navigator.language;
+if(lang.toUpperCase().indexOf('RU')==-1)
+    byId('locale').value=locale='EN';
+else
+    byId('locale').value=locale='RU';
+function localize(){
+    for(i in l[locale])
+        if(byId(i))
+            byId(i).innerHTML=l[locale][i];
+        else if(byId('btn'+i))
+            byId('btn'+i).value=l[locale][i];
+        else if(byId('ph'+i))
+            byId('ph'+i).placeholder=l[locale][i];
+        else if(i==='title')
+            document.title=l[locale][i];
+}
+var autoLocale=true,m=new Array()
+m['CONFIRM_RU']={s:'info', t:'Пароль подтвержден'};
+m['CONFIRM_EN']={s:'info', t:'Password confirmed'};
+m['MAIL_RU']={s:'info', t:'Пароль отправлен по почте, подтвердите его смену по ссылке из письма'};
+m['MAIL_EN']={s:'info', t:'The password is sent by email, please confirm it'};
+m['NEW_PWD_RU']={s:'info', t:'Пароль отправлен по почте'};
+m['NEW_PWD_EN']={s:'info', t:'The password is sent by email'};
+m['WRONG_DB_RU']={s:'danger', t:'Неверное имя базы данных'};
+m['WRONG_DB_EN']={s:'danger', t:'This database does not exist'};
+m['WRONG_RU']={s:'danger', t:'Неверное имя пользователя или пароль'};
+m['WRONG_EN']={s:'danger', t:'The username or password incorrect'};
+m['OBSOLETE_RU']={s:'warning', t:'Информация устарела'};
+m['OBSOLETE_EN']={s:'warning', t:'The info is obsolete'};
+m['SMS_RU']={s:'info', t:'Пароль отправлен в SMS на номер 8(9xx)xxx-{_global_.sms} (код: {_global_.code})'};
+m['SMS_EN']={s:'info', t:'PAsswor was sent to mobile +79xxxxx-{_global_.sms} (SMS ID: {_global_.code})'};
+m['WRONG_CONT_RU']={s:'danger', t:'Неверное имя, email или телефон пользователя {_global_.user}'};
+m['WRONG_CONT_EN']={s:'danger', t:'The user name, email or phone invalid {_global_.user}'};
+m['FIRST_RU']={s:'success', t:'Поздравляем, регистрация подтверждена!'};
+m['FIRST_EN']={s:'success', t:'The registration complete!'};
+m['EXPIRED_RU']={s:'warning', t:'Токен не найден. Возможно, истек срок действия ссылки.'};
+m['EXPIRED_EN']={s:'warning', t:'The token not found. Seems the link is expired.'};
+m['TOCONFIRM_RU']={s:'success', t:'Спасибо за регистрацию!<br />Подтвердите ее из письма, присланного на ваш адрес'};
+m['TOCONFIRM_EN']={s:'success', t:'Thank you for joining us!<br />Please confirm the registration following the link in your mail (check SPAM in case you do not see it in Inbox)'};
+
+if(m['{_global_.message}_'+locale]!=undefined)
+    m=m['{_global_.message}_'+locale];
+<!-- Begin:_Reg -->
+m=m['{_request_.message}_'+locale];
+<!-- End:_Reg -->
+if(m.s){
+    byId('message').innerHTML=m.t;
+    byId('message').style='display:block; margin-bottom:0px;';
+    byId('message').className='alert alert-'+m.s;
+}
+localize();
+function changeLocale(loc){
+    autoLocale=false;
+    locale=byId('loginlocale').value=loc;
+    localize();
+}
+function isEmpty(db,u,p){
+	if(db.length*u.length*p.length==0){
+		alert(l[locale]['isempty']);
+		return true;
+	}
+	byId('form').action = '/'+byId('db').value+'/auth';
+	byId('tzone').value = Math.round(new Date().getTime()/1000)-new Date().getTimezoneOffset()*60;
+}
+function checkLocale(k){
+    var match=document.cookie.match(new RegExp('(^| )'+k+'_locale=([^;]+)'));
+    if(match)
+        byId('locale').value=locale=match[2];  // The locale was found
+    else
+        byId('locale').value=locale='RU'; // Use RU by default
+    byId('loginlocale').value=locale;
+}
+function hideUnHide(i){
+    if(byId(i).classList.contains('hidden'))
+        byId(i).classList.remove('hidden');
+    else
+        byId(i).className+=' hidden';
+}
+</script>
+</body>
+</html>

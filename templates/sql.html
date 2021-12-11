@@ -1,0 +1,522 @@
+<style>
+label {
+    display: inline-block;
+    margin: .5rem 0 0 0;
+    float: left;
+}
+.list {
+    position: absolute;
+}
+.list-open {
+    z-index: 10;
+    background-color: #fafafa;
+    border: 1px solid #eeeeee;
+}
+.rth {
+    vertical-align: bottom;
+}
+.saving {
+    border-color: green;
+    border-width: 2px;
+}
+.btns, .inline {
+    display: inline-block;
+}
+.icon8 {
+    padding: 8px;
+}
+.ileft {
+    margin-left:-12px;
+}
+.iright {
+    margin-right:-12px;
+}
+</style>
+<div class="t9n">
+<div id="show" class="list">
+<a id="showanchor" onclick="byId('queries').classList.remove('hidden');byId('show').classList.add('hidden')"><img class="icon8" title="<t9n>[RU]Список запросов[EN]Reports list</t9n>" src="https://img.icons8.com/ios/25/222222/list.png"></a>
+</div>
+<div id="queries" class="list list-open p-3 hidden" onclick="event.stopPropagation?event.stopPropagation():(event.cancelBubble=true);">
+<p>
+    <t9n>[RU]Выберите запрос или добавьте новый[EN]Pick the report or add a new one</t9n>
+    <a id="closeList" onclick="byId('queries').classList.add('hidden');byId('show').classList.remove('hidden')">
+        &nbsp;&nbsp;&nbsp;&nbsp;<img class="icon8" title="<t9n>[RU]Скрыть список запросов[EN]Hide the reports list</t9n>" src="https://img.icons8.com/ios/25/222222/close-window.png">
+    </a>
+</p>
+<div>
+<form method="post" action="/{_global_.z}/_m_new/22?up=1" onsubmit="addbtn.disabled=true; return true;">
+    <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+    <input type="hidden" name="next_act" value="{_global_.action}">
+    <table>
+    <tr>
+    	<td><input placeholder="<t9n>[RU]Введите имя[EN]Enter the name</t9n>" type="text" name="t22" class="form-control form-control-sm"></td>
+    	<td><input type="submit" name="addbtn" class="btn btn-primary btn-sm" value="<t9n>[RU]Создать запрос[EN]Create a query</t9n>"></td>
+    </tr>
+    </table>
+</form>
+</div>
+<br/>
+<div id="list">
+    <p><a href="/{_global_.z}/sql/:id:"> :val:</a></p>
+</div>
+</div>
+</div>
+<div id="one" class="hidden mt-3" onclick="hideList()">
+    <center><h4 class="ml-5"><a target=":id:" href="/{_global_.z}/report/{_global_.id}">:val:</a>&nbsp; <a target=":id:" href="/{_global_.z}/edit_obj/{_global_.id}#t22"><img class="icon8" src="https://img.icons8.com/ios/25/222222/edit.png"></a></h4></center>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col" style="height:12px">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-3 col-lg-2 col-xl-2 mb-1">
+                <nobr><label class="mt-0"><img id="interactWait" class="hidden" src="/i/ajax.gif"><input type="checkbox" id="interact" onchange="setInteract()" value="1">&nbsp;<t9n>[RU]Интерактивный[EN]Interactive</t9n></label></nobr>
+            </div>
+            <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                <button class="btn btn-outline-secondary btn-sm mb-1" id="102" onclick="showCtl(this)"><t9n>[RU]Фильтр[EN]Filter</t9n></button>
+                <button class="btn btn-outline-secondary btn-sm mb-1" id="84" onclick="showCtl(this)"><t9n>[RU]Формат[EN]Format</t9n></button>
+                <button class="btn btn-outline-secondary btn-sm mb-1" id="104" onclick="showCtl(this)"><t9n>[RU]Функция[EN]Function</t9n></button>
+                <button class="btn btn-outline-secondary btn-sm mb-1" id="109" onclick="showCtl(this)"><t9n>[RU]Сортировка[EN]Order</t9n></button>
+                <button class="btn btn-outline-secondary btn-sm mb-1" id="72" onclick="showCtl(this)"><t9n>[RU]Итоги[EN]Totals</t9n></button>
+                <button class="btn btn-outline-secondary btn-sm mb-1" id="101" onclick="showCtl(this)"><t9n>[RU]Формула[EN]Expression</t9n></button>
+                <button class="btn btn-outline-secondary btn-sm mb-1" id="105" onclick="showCtl(this)"><t9n>[RU]HAVING[EN]HAVING</t9n></button>
+            </div>
+            <div class="col-12 col-md-12 col-lg-3 col-xl-4 mb-1">
+                <div class="input-group input-group-sm">
+            		<select id="t28" class="form-control">
+            			<option id=":id:" value=":id:">:val:</option>
+            		</select>
+            		<div class="input-group-append">
+            		    <img id="addColWait" class="hidden" src="/i/ajax.gif">
+                		<button id="addCol" class="btn btn-primary btn-sm p-0" onclick="addCol()">
+                		    <img src="https://img.icons8.com/ios/25/222222/add.png">
+                		</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="warning" class="alert alert-warning hidden" role="alert"></div>
+    <div id="ShowReport"></div>
+</div>
+<div class="hidden t9n" id="controls">
+    <div id="template102">
+		<input type="text" id="t102_:id:" value="" placeholder="<t9n>[RU]От[EN]Filter from</t9n>" class="form-control form-control-sm save-input">
+		<div id="dd102_:id:"></div>
+		<input type="text" id="t103_:id:" value="" placeholder="<t9n>[RU]До[EN]Filter to</t9n>" class="form-control form-control-sm save-input">
+		<div id="dd103_:id:"></div>
+	</div>
+    <div id="template104"><!--Функция-->
+        <select name="t104" id="t104_:id:" class="form-control form-control-sm onchange">
+			    <option> </option>
+				<option value="98" r="104">abn_BT</option>
+				<option value="89" r="104">abn_DATE2STR</option>
+				<option value="85" r="104">abn_ID</option>
+				<option value="90" r="104">abn_NUM2STR</option>
+				<option value="93" r="104">abn_ORD</option>
+				<option value="88" r="104">abn_REQ</option>
+				<option value="92" r="104">abn_ROWNUM</option>
+				<option value="87" r="104">abn_TYP</option>
+				<option value="86" r="104">abn_UP</option>
+				<option value="91" r="104">abn_URL</option>
+				<option value="77" r="104">AVG</option>
+				<option value="74" r="104">COUNT</option>
+				<option value="75" r="104">MAX</option>
+				<option value="76" r="104">MIN</option>
+				<option value="141" r="104">MONTH</option>
+				<option value="140" r="104">ROUND</option>
+				<option value="73" r="104">SUM</option>
+				<option value="142" r="104">YEAR</option>
+		</select>
+	</div>
+	<div id="template84"><!--Формат-->
+	    <select name="t84" id="t84_:id:" class="form-control form-control-sm onchange">
+		    <option> </option>
+			<option value="78" r="84">DATE</option>
+			<option value="34" r="84">HTML</option>
+			<option value="81" r="84">NUMBER</option>
+			<option value="82" r="84">PATH</option>
+			<option value="79" r="84">SHORT</option>
+			<option value="80" r="84">SIGNED</option>
+		</select>
+    </div>
+    <div id="template72"><!--Итог-->
+	    <select name="t72" id="t72_:id:" class="form-control form-control-sm onchange">
+		    <option> </option>
+			<option value="68" r="72">AVG</option>
+			<option value="71" r="72">COUNT</option>
+			<option value="70" r="72">MAX</option>
+			<option value="69" r="72">MIN</option>
+			<option value="67" r="72">SUM</option>
+		</select>
+	</div>
+    <div id="template105"><!--Having-->
+		<input type="text" id="t105_:id:" value="" placeholder="<t9n>[RU]От[EN]Having: from</t9n>" class="form-control form-control-sm save-input">
+		<input type="text" id="t106_:id:" value="" placeholder="<t9n>[RU]до[EN]Having: to</t9n>" class="form-control form-control-sm save-input">
+	</div>
+    <div id="template109"><!--Order-->
+		
+	</div>
+    <div id="template101"><!--Expression-->
+		<input type="text" name="t101" id="t101_:id:" class="form-control form-control-sm save-input" value="">
+	</div>
+    <div id="date_dd"><!--Date DD-->
+    	<ul class="dropdown-menu">
+            <li class="p-2"><a onclick="curEl.value='[TODAY]';updateValue(curEl)">[TODAY] – <t9n>[RU]текущий день[EN]Current date</t9n></a></li>
+            <li class="p-2"><a onclick="curEl.value='[YESTERDAY]';updateValue(curEl)">[YESTERDAY] – <t9n>[RU]вчерашний день[EN]yesterday</t9n></a></li>
+            <li class="p-2"><a onclick="curEl.value='[TOMORROW]';updateValue(curEl)">[TOMORROW] – <t9n>[RU]завтрашний день.[EN]tomorrow date</t9n></a></li>
+            <li class="p-2"><a onclick="curEl.value='[MONTH_AGO]';updateValue(curEl)">[MONTH_AGO] – <t9n>[RU]день месяц назад[EN]a day a month ago</t9n></a></li>
+            <li class="p-2"><a onclick="curEl.value='';updateValue(curEl)"><img class="icon8 p-0" src="https://img.icons8.com/ios/20/dd0000/delete-sign.png"/> <t9n>[RU]Очистить[EN]Clean</t9n></a></li>
+        </ul>
+	</div>
+</div>
+<script>
+function hideList(){
+    if(!byId('queries').classList.contains('hidden'))
+        byId('closeList').click();
+}
+function showCtl(el){ // Mark buttons pressed in case they were pressed before the last action
+    i='r'+el.id;
+    if(byId(i).classList.contains('hidden')){
+        byId(i).classList.remove('hidden');
+        el.classList.add('active')
+    }
+    else{
+        byId(i).classList.add('hidden');
+        el.classList.remove('active')
+    }
+}
+function setInteract(){ // Set Interactive mark and save it's value
+    byId('interactWait').classList.remove('hidden');
+    byId('interact').classList.add('hidden');
+    myApi('POST','_m_set/{_global_.id}?JSON&t95='+(interact?'':1),'interact');
+} 
+function addCol(){ // Add a column to the report
+    byId('addCol').classList.add('hidden');
+    byId('addColWait').classList.remove('hidden');
+    // Prevent creating duplicate names, use Name1, Name2, ...
+    var j=1,seek=true,a=alias[byId('t28').value];
+    while(seek){
+        seek=false;
+        for(i in colNames)
+            if(colNames[i]==a){
+                a=alias[byId('t28').value]+(j++);
+                seek=true;
+                break;
+            }
+    }
+    myApi('POST','_m_new/28?JSON&up={_global_.id}&t28='+byId('t28').value+'&t100='+a,'addCol');
+}
+function getReq(id,r){
+    if(json['select'].reqs)
+        if(json['select'].reqs[id]!==undefined)
+            if(json['select'].reqs[id][r]!==undefined)
+                return json['select'].reqs[id][r];
+    return '';
+}
+function align(i){
+    switch(i){
+		case 'PWD':
+		case 'DATE':
+		case 'BOOLEAN':
+			return 'CENTER';
+		case 'NUMBER':
+		case 'SIGNED':
+			return 'RIGHT';
+	}
+	return 'LEFT';
+}
+// Функция для отправки асинхронного запроса по https api с обработкой его результата
+function myApi(m,u,b,vars,index){ // Параметры: метод, адрес, действие - ветка switch, параметры
+    vars=vars||''; // По умолчанию список параметров пуст
+    var h='',i,j,er='',obj=new XMLHttpRequest(); // Объявляем переменную под JSON и API по HTTPS
+    json[u]=[];
+    obj.open(m,'/'+db+'/'+u,true); // Открываем асинхронное соединение заданным методом по нужному адресу
+    if(m=='POST'){ // Если это POST запрос, то передаем заданные параметры
+        obj.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        vars='_xsrf='+xsrf+'&'+vars; // добавляем токен xsrf, необходимый для POST-запроса
+        obj.send(vars); // отправляем параметры
+    }
+    else
+        obj.send(); // отправили запрос и теперь будем ждать ответ, а пока - выходим
+    obj.onload=function(e){ // Когда запрос вернет результат - сработает эта функция
+        try{ // в this.responseText лежит ответ от сервера
+            json[b]=JSON.parse(this.responseText); // Пытаемся разобрать ответ как JSON
+        }
+        catch(e){ // Если произошла ошибка при разборе JSON
+            console.log(e); // то выводим детали этой ошибки в консоль браузера
+            console.log(er=this.responseText);
+        }
+        obj.abort(); // Закрываем соединение
+        switch(b){ // Отрабатываем заданную команду - переходим в соответствующую ветку case
+            case 'addCol':
+                byId('addColWait').classList.add('hidden');
+                byId('addCol').classList.remove('hidden');
+            case 'd':
+                go();
+                break;
+            case 'ctls': // Controls were updated - Filter, Function, Totals, etc.
+                myApi('GET','report/{_global_.id}?LIMIT=25&JSON','ShowReport');
+            case 'updateCol': // Update a column name - alias
+                if(byId(index))
+                    byId(index).classList.remove('saving');
+                break;
+            case 'interact':
+                byId('interactWait').classList.add('hidden');
+                byId('interact').classList.remove('hidden');
+                go();
+                break;
+            case 'list': 
+                if(json[b]['&main..&uni_obj.&uni_obj_all']){
+                    var a=json[b]['&main..&uni_obj.&uni_obj_all'];
+                    for(i in a.id)
+                        h+=byId('list').innerHTML.replace(':id:',a.id[i]).replace(':val:',a.val[i]);
+                    byId('list').innerHTML=h;
+                    if('{_global_.id}'=='')
+                        byId('showanchor').click();
+                }
+                break;
+            case 'one': // Get the info on the requested report
+                if(json[b]['&main..&object']){
+                    byId('one').innerHTML=byId('one').innerHTML.replace(/:id:/g,json[b]['&main..&object'].id)
+                                                                .replace(':val:',json[b]['&main..&object'].val);
+                    byId('one').classList.remove('hidden');
+                    byId('interact').checked=interact=(json[b]['reqs'][95]['value']!="");
+                    myApi('GET','object/28/?F_U={_global_.id}&JSON','select');
+                }
+                break;
+            case 'select': // Get the info on the requested report's columns
+                if(json[b]['type']){
+                    var hcolor,htitle,id,dir,order,l='',hide,c=[],control;
+                    for(k in ctl)
+                        c[k]='';
+                    j=0;
+                    for(i in json[b].object){
+                        id=json[b].object[i].id;
+                        // The report table header
+                        h+='<td class="rth p-2"><center><div id="'+id+'">'+drawCol(id)+'</div>';
+                        // Hidden/non-hidden fields
+                        if(getReq(id,107)===''){
+                            hcolor='cccccc';
+                            htitle=t9n('[RU]Кликните, чтобы скрыть колонку в отчете[EN]Click to hide this column in the report');
+                            l+='<td align=":align'+j+':">:'+j+':</td>'; // a non-hidden report line
+                            j++;
+                            t107=1;
+                        }
+                        else{
+                            hcolor='222222';
+                            htitle=t9n('[RU]Скрытое поле[EN]Hidden column. Click to unhide');
+                            l+='<td> </td>' // a hidden report line
+                            t107='';
+                        }
+                        // Buttons under the column name
+                        h+='<nobr><img class="icon8 ileft" onclick="this.src=\'/i/ajax.gif\';d(\'up\','+id+')" src="https://img.icons8.com/ios/25/cccccc/chevron-left.png" title="'
+                                +t9n('[RU]Переместить колонку левее[EN]Move the column left')+'">'
+                            +'<img class="icon8" onclick="this.src=\'/i/ajax.gif\';d(\'set\','+id+',\'t107='+t107+'\')" src="https://img.icons8.com/ios/25/'+hcolor+'/hide.png" title="'+htitle+'">'
+                            +'<img class="icon8 iright" onclick="d(\'del\','+id+')" src="https://img.icons8.com/ios/25/cccccc/delete.png" title="'
+                                +t9n('[RU]Удалить колонку[EN]Delete the column')+'"><nobr></center></td>';
+                        // Column control lines: Filter, Function, Totals, etc.
+                        for(k in ctl){
+                            c[k]+='<td style="border: none;" class="p-1" id="td'+ctl[k]+'_'+id+'">';
+                            control=(i==0?byId(ctl[k]).innerHTML:'')+'<br />';
+                            control+=byId('template'+ctl[k]).innerHTML.replace(/:t:/g,ctl[k]).replace(/:id:/g,id);
+                            if(getReq(id,'ref_'+ctl[k])!=='') // Reference - select input
+                                control=control.replace('value="'+getReq(id,'ref_'+ctl[k]).split(':')[1]+'"','value="'+getReq(id,'ref_'+ctl[k]).split(':')[1]+'" selected');
+                            else if(ctl[k]==102){ // Range input for Filter
+                                control=control.replace('id="t102_'+id+'" value=""','id="t102_'+id+'" value="'+getReq(id,102)+'"')
+                                                .replace('id="t103_'+id+'" value=""','id="t103_'+id+'" value="'+getReq(id,103)+'"');
+                            }
+                            else if(ctl[k]==105){ // Range input for HAVING
+                                control=control.replace('id="t105_'+id+'" value=""','id="t105_'+id+'" value="'+getReq(id,105)+'"')
+                                                .replace('id="t106_'+id+'" value=""','id="t106_'+id+'" value="'+getReq(id,106)+'"');
+                            }
+                            else if(ctl[k]==109){ // Order
+                                dir=getReq(id,ctl[k]);
+                                order=Math.abs(dir);
+                                if(dir=='')
+                                    control+='<img onclick="this.src=\'/i/ajax.gif\';setOrder('+id+',0,1)" title="'+t9n('[RU]Включить сортировку[EN]Set the order by this column')
+                                            +'" class="icon8" src="https://img.icons8.com/ios/25/cccccc/generic-sorting-2.png"/>';
+                                else{
+                                    if(order==1)
+                                        control+='<img title="'+t9n('[RU]В первую очередь сортировка по этой колонке[EN]First, the report is ordered by this column')
+                                                +'" class="icon8" src="https://img.icons8.com/ios/25/222222/'+order+'.png"/>';
+                                    else
+                                        control+='<img onclick="this.src=\'/i/ajax.gif\';setOrder('+id+','+dir+','+(order-1)+')" title="'+t9n('[RU]Очередность сортировки. Кликните, чтобы повысить.[EN]Ordering sequence. Click to rise.')
+                                                +'" class="icon8" src="https://img.icons8.com/ios/25/222222/'+order+'.png"/>';
+                                    if(dir>0)
+                                        control+='<img title="'+t9n('[RU]Сортировка по возрастанию. Кликните, чтобы обратить[EN]Ascending order. Click to revert')
+                                                +'" onclick="this.src=\'/i/ajax.gif\';d(\'set\','+id+',\'t109='+(-dir)+'\')" class="icon8" src="https://img.icons8.com/ios/25/222222/generic-sorting-2.png"/>';
+                                    else
+                                        control+='<img title="'+t9n('[RU]Сортировка по убыванию. Кликните, чтобы обратить[EN]Descending order. Click to revert')
+                                                +'" onclick="this.src=\'/i/ajax.gif\';d(\'set\','+id+',\'t109='+(-dir)+'\')" class="icon8" src="https://img.icons8.com/ios/25/222222/generic-sorting.png"/>';
+                                    control+='<img title="'+t9n('[RU]Удалить сортировку[EN]Remove the ordering')
+                                            +'" onclick="this.src=\'/i/ajax.gif\';setOrder('+id+',0,\'\')" class="icon8" src="https://img.icons8.com/ios/25/222222/delete-sign.png"/>';
+                                }
+                            }
+                            else
+                                control=control.replace('value=""','value="'+getReq(id,ctl[k])+'"');
+                            c[k]+=control+'</td>';
+                        }
+                    }
+                    // Construct the control lines
+                    for(k in ctl)
+                        c[k]='<tr style="border: 1px" id="r'+ctl[k]+'" class="'+(byId(ctl[k]).classList.contains('active')?'':'hidden')+'">'+c[k]+'</tr>';
+                    // The template for the data line
+                    rbody='<tr>'+l+'</tr>';
+                    // Table: Header (h) + Control lines (c) + Data (rbody as a template)
+                    byId('ShowReport').innerHTML='<table class="table table-bordered"><thead><tr>'+h+c.join('')+'</thead><tbody id="rbody" class="hidden">'+rbody+'</body></table>';
+                    // A list of columns available to add to the report
+                    var a=json[b]['&main..&uni_obj.&new_req_report_column.&rep_col_list'];
+                    h='';
+                    for(i in a.id){
+                        h+=t28.replace(/:id:/g,a.id[i]).replace(':val:',a.val[i]);
+                        alias[a.id[i]]=a.val[i].split(' -> ').pop();
+                    }
+                    byId('t28').innerHTML=h;
+                    // Request the report data
+                    myApi('GET','report/{_global_.id}?LIMIT=25&JSON','ShowReport');
+                    // Listeners to auto-save the changed control line values
+                    $('.save-input').focusout(function(){ // Text input fields
+                        updateValue(this);
+                    });
+                    $('.save-input').focusin(function(){ // Text input fields - get current element for Date DDs
+                        curEl=this;
+                    });
+                    $('.onchange').change(function(){ // Dropdown lists
+                        updateValue(this);
+                    });
+                    $('.save-input').keyup(function(){ // Text input fields on Enter pressed
+                        if(event.keyCode==13)
+                            updateValue(this);
+                    });
+                }
+                break;
+            case 'ShowReport': // Construct the report table
+                colorBtns();
+                if(er!=''){ // There were errors during report retrieval
+                    byId('warning').innerHTML=er.replace(/<A.+<\/a>/i,''); // Clean up the links if any
+                    byId('warning').classList.remove('hidden');
+                }
+                else
+                if(json[b]){
+                    for(i in json[b]["data"][0]){ // Data lines
+                        el=rbody;
+                        for(j in json[b]["data"])
+                            el=el.replace(':'+j+':',json[b]["data"][j][i])
+                                .replace(':align'+j+':',align(json[b]["columns"][j].format));
+                        h+=el;
+                    }
+                    if(json[b]["columns"][0]["totals"]!==undefined){ // Fill in Total lines, if any
+                        el=rbody;
+                        for(j in json[b]["data"])
+                            el=el.replace(':'+j+':','<b>'+json[b]["columns"][j]["totals"]+'</b>')
+                                .replace(':align'+j+':',align(json[b]["columns"][j].format));
+                        h+=el;
+                    }
+                    byId('rbody').innerHTML=h;
+                    byId('rbody').classList.remove('hidden');
+                    var id;
+                    for(i in json[b]["columns"]) // Update DATE fields with keyword dropdowns
+                        if(json[b]["columns"][i].format=='DATE')
+                            if(dateDDFilledIn[json[b]["columns"][i].id]==undefined){
+                                id=json[b]["columns"][i].id;
+                    		    $('#t102_'+id).attr("data-toggle", "dropdown");
+                    		    $('#t102_'+id).attr("autocomplete", "off");
+                    		    $('#t103_'+id).attr("data-toggle", "dropdown");
+                    		    $('#t103_'+id).attr("autocomplete", "off");
+                    		    byId('dd102_'+id).innerHTML+=byId('date_dd').innerHTML.replace(/:t:/g,'102').replace(/:id:/g,id);
+                                dateDDFilledIn[id]=true;
+                            }
+                }
+                break;
+
+        }
+    }
+}
+function setOrder(id,dir,order){ // Set the order control
+    for(i in json['select'].reqs)
+        if(json['select'].reqs[i][109]!==undefined)
+            if(order===''){ // Move others up in case we delete an order value
+                if(Math.abs(json['select'].reqs[i][109])>json['select'].reqs[id][109])
+                    myApi('POST','_m_set/'+i+'?JSON&t109='+(parseInt(json['select'].reqs[i][109])-Math.sign(json['select'].reqs[i][109])),'NoAction');
+            }
+            else if((Math.abs(json['select'].reqs[i][109])<=order)||(dir===0)) // Move others down in case we add a new ordering
+                myApi('POST','_m_set/'+i+'?JSON&t109='+(Math.sign(json['select'].reqs[i][109])+parseInt(json['select'].reqs[i][109])),'NoAction');
+    myApi('POST','_m_set/'+id+'?JSON&t109='+order,'d'); // Save the initially changed order value
+}
+function colorBtns(){ // Color the buttons blue in case there are filled in control under them
+    for(var i in ctl)
+        byId(ctl[i]).classList.add('btn-outline-secondary');
+    if(json['select'].reqs==undefined)
+        return;
+    for(i in json['select'].reqs)
+        for(var j in json['select'].reqs[i])
+            if(byId(k=j.replace('ref_',''))&&(json['select'].reqs[i][j]!=''))
+                if(byId(k).classList.contains('btn-outline-secondary')){
+                    byId(k).classList.remove('btn-outline-secondary');
+                    byId(k).classList.add('btn-outline-primary');
+                }
+}
+function updateValue(i){ // Save the updated control value
+    var obj=i.id.split('_')[1],req=i.id.split('_')[0].substr(1);
+    if(getReq(obj,req)==i.value)
+        return;
+    setReq(obj,req,i.value);
+    i.className+=' saving';
+    myApi('POST','_m_set/'+obj+'?JSON&t'+req+'='+encodeURIComponent(i.value),'ctls','',i.id);
+}
+function setReq(id,t,v){ // Save the changed value in the local array
+    if(json['select'].reqs==undefined)
+        json['select'].reqs=[];
+    if(json['select'].reqs[id]==undefined)
+        json['select'].reqs[id]=[];
+    json['select'].reqs[id][t]=v;
+}
+function d(d,i,v){ // Do the DML command and re-draw the report
+    v=v||'';
+    myApi('POST','_m_'+d+'/'+i+'?JSON&'+v,'d');
+}
+function drawCol(id){
+    return '<a onclick="activate('+id+')">'+colAlias(id)+'</a>';
+}
+function colAlias(id){ // In case the alias is not set, use the original object name, referenced by the column
+    colNames[id]=getReq(id,100);
+    if(colNames[id]==='')
+        for(i in json['select'].object)
+            if(json['select'].object[i].id==id)
+                colNames[id]=json['select'].object[i].val;
+    return colNames[id];
+}
+function deActivate(id){ // Deactivate the column name edit field upon a focus change
+    if(byId(id))
+        byId(id).innerHTML=drawCol(id);
+    active=undefined;
+}
+function activate(id){ // Activate the column name edit field upon click
+    if(active==id)
+        return;
+    deActivate(active);
+    active=id;
+    // COnstruct the input field to edit the column name
+    byId(id).innerHTML='<input type="text" id="c'+id+'" class="form-control form-control-sm" onkeyup="if(event.keyCode==13)updateCol(this)" onfocusout="updateCol(this);deActivate('+id+')" value="'+colAlias(id)+'">';
+    byId('c'+id).focus();
+}
+function updateCol(i){ // Save the updated column name - alias
+    var id=i.id.substr(1);
+    if(colNames[id]==i.value)
+        return;
+    i.className+=' saving';
+    setReq(id,100,i.value);
+    colNames[id]=i.value;
+    myApi('POST','_m_set/'+id+'?JSON&t100='+encodeURIComponent(i.value),'updateCol','',i.id);
+}
+function go(){ // Re-draw the header and the report
+    byId('warning').classList.add('hidden');
+    myApi('GET','edit_obj/{_global_.id}?JSON','one');
+}
+document.title=t9n('[RU]Конструктор запросов[EN]Query builder');
+var rbody,active=-1,alias=[],colNames=[],rep=[],json=[],t28=byId('t28').innerHTML,dateDDFilledIn=[],curEl,ctl=['102','84','104','109','72','101','105'];
+myApi('GET','object/22/?JSON','list');
+if('{_global_.id}'!='') // In case a report is requested - draw it
+    go();
+</script>

@@ -1,0 +1,526 @@
+<script>
+document.title=t9n('[RU]Конструктор форм[EN]Form builder');
+var t=new Array();
+var r=new Array();
+var RepCols=new Array();
+var im=new Array();
+<!-- Begin:&Edit_Typs -->
+t[{ID}]={t:{T},r:"{REF_VAL}",u:{UNIQ},v:"{VAL}"};
+if("{ORD}"){if(r[{ID}]===undefined)r[{ID}]={};r[{ID}]["{ORD}"]={i:"{REQ_ID}",t:"{REQ_T}",a:"{ATTRS}",r:"{REFT}"};}
+<!-- End:&Edit_Typs -->
+//console.log(t);
+//console.log(r);
+function toggle(s){
+	byId('AllForms').style.display = (s=='show')?'inline-block':'none';
+	byId('ShowAllForms').style.display = (s=='show')?'none':'inline-block';
+}
+function defaults(i,typ){
+    var h='';
+    for(var j in RepCols)
+        h+='<p><a style="border-bottom: 1px dotted #000;" onclick="byId(\'def\'+'+i+').value=this.innerHTML">'+j+'</a> &mdash; '+RepCols[j]+'</p>';
+    byId('defaults_'+i).innerHTML=byId('defaults').innerHTML.replace(':defaults:',h);
+}
+function save(u, b){
+    var a=byId(b).innerHTML,obj=new XMLHttpRequest(); 
+    obj.open('POST','/api/{_global_.z}/'+u,true);
+    obj.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+    obj.setRequestHeader('X-Authorization','{_global_.token}');
+    obj.send('_xsrf={_global_.xsrf}');
+    byId(b).innerHTML='<img src="/i/ajax.gif">';
+    obj.onload=function(e) {
+        try{ var json=JSON.parse(this.responseText); }
+        catch(e){ console.log(this.responseText); }
+        byId(b).innerHTML=a;
+        byId(b).style.display='none';
+        obj.abort();
+		im[b.substring(5)]=byId('p'+b.substring(5)).value; // Save the new value to track changes
+    }
+}
+function getReqName(i,typ){
+    for(var k in r[typ])
+        if(r[typ][k].i==i)
+    		if(r[typ][k].a.indexOf(':ALIAS=')+1) // We have an alias for this ref requisite
+                return r[typ][k].a.split(':ALIAS=').pop().split(':').shift()+' ('+t[r[typ][k].t].v+')';
+    		else
+                return t[r[typ][k].t].v;
+}
+function v(i,t){ // Validate the input
+    t=t||''; // t is blank by default
+    if(im[t+i]!=byId('p'+t+i).value) // If some changes were made, show the controls
+    	byId('save_'+i).style.display='inline-block';
+}
+function vb(i){ // Validate the button update form
+	if(byId('p'+i).value=='')
+		alert(t9n('[RU]Введите имя кнопки[EN]Enter the button name'));
+	else if(byId('pa'+i).value=='')
+		alert(t9n('[RU]Задайте действие для кнопки[EN]Assign an acton for the button'));
+	else{
+		byId('sb').action+=i;
+		byId('t150').value=byId('p'+i).value;
+		byId('t171').value=byId('pa'+i).value;
+		byId('t163').value=byId('pc'+i).value;
+		byId('sb').submit();
+	}
+}
+function cancel(i){ // Restore the last saved value
+    el=new Array('','bg','color','a','c'); // Elements: panel name, bgcolor, color, etc...
+    for(var j in el)
+	    if(im[el[j]+i]!==undefined) // In case we'd saved this element
+    	    byId('p'+el[j]+i).value=im[el[j]+i]; // - restore it
+	byId('save_'+i).style.display='none'; // Hide the Save/Cancel buttons
+}
+function getNFill(u,b,elId){
+    elId=elId||''; // elId is blank by default
+    var i,l,obj=new XMLHttpRequest(); 
+    obj.open('GET','/api/{_global_.z}/'+u,true); 
+    obj.setRequestHeader('X-Authorization','{_global_.token}');
+    obj.send();
+    obj.onload=function(e) {
+        try { var json=JSON.parse(this.responseText); }
+        catch(e) { console.log(this.responseText); console.log(e); }
+        obj.abort();
+        var h='';
+        console.log(json);
+        switch(b) {
+        case 'FormsList':
+			l=byId(b).innerHTML;
+            if(json['&main..&uni_obj.&uni_obj_all'])
+                for(i in json['&main..&uni_obj.&uni_obj_all'].val)
+                    h+=l.replace(':id:', json['&main..&uni_obj.&uni_obj_all'].id[i])
+                        .replace(':val:', json['&main..&uni_obj.&uni_obj_all'].val[i]);
+            byId(b).innerHTML=h;
+            break;
+        case 'RepCols':
+            if(json['&main..&uni_obj.&uni_obj_all']){
+                for(i in json['&main..&uni_obj.&uni_obj_all'].id){
+                    l=json['&object_reqs'][json['&main..&uni_obj.&uni_obj_all'].id[i]][0]+' ('+json['&main..&uni_obj.&uni_obj_all'].val[i]+')</option>';
+                    h+='<option value="'+json['&main..&uni_obj.&uni_obj_all'].id[i]+'">'+l;
+                    RepCols[elId+'_'+json['&main..&uni_obj.&uni_obj_all'].id[i]]=byId('p'+elId).value+': '+l;
+                }
+                b=json['&main..&uni_obj']["f_u"][0];
+                byId('field'+elId).innerHTML+=h;
+            }
+            break;
+        case 'Buttons':
+			l=byId('Panel_'+elId+'_Buttons').innerHTML; // Fetch Buttons block template
+            if(json['&main..&uni_obj.&uni_obj_all']){
+                for(i in json['&main..&uni_obj.&uni_obj_all'].id)
+					h+=l.replace(/:FID:/g,json['&main..&uni_obj.&uni_obj_all'].id[i])
+						.replace(':FieldAlias:',json['&main..&uni_obj.&uni_obj_all'].val[i])
+						.replace(':FieldAction:',json['&object_reqs'][json['&main..&uni_obj.&uni_obj_all'].id[i]].shift())
+						.replace(':FieldClass:',json['&object_reqs'][json['&main..&uni_obj.&uni_obj_all'].id[i]].shift());
+				byId('Panel_'+elId+'_Buttons').innerHTML=h;
+            }
+            break;
+        case 'OneForm':
+            if(!json['&main..&object'])
+                alert('Форма не найдена');
+            else if(json['&main..&object'].typ!=137)
+                alert(t9n('[RU]Неверный тип объекта: [EN]Wrong object type ')+json['&main..&object'].typ+' '+json['&main..&object'].typ_name);
+            else{
+				l=byId(b).innerHTML;
+                getNFill('object/138?F_U='+json['&main..&object'].id,'FormPanels');
+                byId(b).innerHTML=l.replace(/:id:/g, json['&main..&object'].id)
+                                    .replace(':val:', json['&main..&object'].val);
+                byId(b).style.display='block';
+                break;
+            }
+            document.location.href='/{_global_.z}/{_global_.action}';
+            break;
+        case 'FormPanels':
+            var objval,repval,field,fields,typ,origtype,rep,PanelID;
+            l=byId(b).innerHTML;
+            byId(b).innerHTML='';
+            if(json['&main..&uni_obj.&uni_obj_all'])
+            for(i in json['&main..&uni_obj.&uni_obj_all'].val){
+                PanelID=json['&main..&uni_obj.&uni_obj_all'].id[i];
+                // Remember the Type of the Object and the Report used, if any
+                typ=json['&object_reqs'][PanelID][0];
+                rep=json['&object_reqs'][PanelID][1].split('=').pop().split('"').shift();
+                h='';
+                if(t[typ]){
+                    objval=t[typ].v;
+                    origtype=typ;
+                }
+                else // This might be a table requisite - find it among the reqs
+                if(typ>0){
+                    for(k in r)
+                        for(j in r[k])
+                            if(r[k][j].i==typ){
+                                objval=t[k].v+' -> '+t[r[k][j].t].v;
+                                origtype=typ;
+                                typ=r[k][j].t;
+                                break;
+                            }
+                }
+                else
+                    objval="--";
+                if(json['&object_reqs'][PanelID][1]=='')
+                    repval="--";
+                else
+                    repval=json['&object_reqs'][PanelID][1];
+				// Fetch colors
+                h+=l.replace(/:id:/g, PanelID)
+                    .replace(':val:', json['&main..&uni_obj.&uni_obj_all'].val[i])
+                    .replace(':orig_type:', origtype)
+                    .replace(/:type:/g, typ)
+                    .replace(':report:', repval)
+                    .replace(':color:', json['&object_reqs'][PanelID][4]) // Panel's text color
+                    .replace(':bgcolor:', json['&object_reqs'][PanelID][5]) // Background color
+                    .replace(':next:', json['&object_reqs'][PanelID][6]) // Next action after the form submit
+                    .replace(':filter:', json['&object_reqs'][PanelID][7]) // Filter for the Type and Report
+                    .replace(':object:', objval);
+                byId(b).innerHTML+=h;
+				// Fetch buttons
+				if(json['&object_reqs'][PanelID][3].indexOf('(0)')==-1) // Check the number of buttons
+        		    getNFill('object/150?F_U='+PanelID,'Buttons', PanelID);
+				else
+					byId('Panel_'+PanelID+'_Buttons').style.display='none';
+                h=fields='';
+                field=byId('Panel_'+PanelID+'_Fields').innerHTML;
+                for(j in f)
+                    if(f[j].p==PanelID){
+                        
+                        if(f[j].ReportFieldAlias!='') // This is a report field
+                            objval=f[j].ReportField==''?f[j].ReportFieldAlias:f[j].ReportField;
+                        else // This is a form's type requisite - find it among requisites
+                            objval=getReqName(f[j].Field,typ)
+                        fields+=field.replace(/:FID:/g,f[j].i)
+                                    .replace(/:FieldAlias:/g,f[j].FieldAlias)
+                                    .replace(/:FieldValue:/g,f[j].FieldValue)
+                                    .replace(':Field:',objval)
+                                    .replace(/:ReportFieldAlias:/g,f[j].ReportFieldAlias!=''?' ('+f[j].ReportFieldAlias+')':'');
+                    }
+                byId('Panel_'+PanelID+'_Fields').innerHTML=fields;
+                // Append the requisites to the dropdown list in the form to add a field
+                h='';
+                if(byId(typ))
+                	for(i in r[typ]){
+                		h+='<option value="'+r[typ][i].i+'">';
+                		if(r[typ][i].a.indexOf(':ALIAS=')+1) // We have an alias for this ref requisite
+                		    h+=r[typ][i].a.split(':ALIAS=').pop().split(':').shift()+' ('+t[r[typ][i].t].v+')</option>';
+                		else
+                		    h+=t[r[typ][i].t].v+'</option>';
+                	}
+                byId('field'+PanelID).innerHTML=h;
+                if(rep!='')
+        		    getNFill('object/28?F_U='+rep+'&F_107=!%&PanelID='+PanelID,'RepCols', PanelID);
+            }
+            byId(b).style.display=byId('AddPanel').style.display='inline-block';
+            break;
+        }
+    }
+}
+</script>
+<div class="t9n">
+<div id="ShowAllForms">
+<a href="#" onclick="toggle('show');"><t9n>[RU]Список форм[EN]Forms list</t9n></a>
+</div>
+<div id="AllForms" style="display:none;">
+<p><t9n>[RU]Выберите форму или добавьте новую[EN]Pick the form or add a new one</t9n></p>
+<div id="FormsList">
+    <p><a href="/{_global_.z}/{_global_.action}/:id:"> :val:</a></p>
+</div>
+<div>
+<form method="post" action="/{_global_.z}/_m_new/137?up=1" onsubmit="addbtn.disabled=true; return true;">
+    <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+    <input type="hidden" name="next_act" value="{_global_.action}">
+    <table>
+    <tr>
+    	<td><input placeholder="<t9n>[RU]Введите имя[EN]Enter the name</t9n>" type="text" name="t137" class="form-control form-control-sm"></td>
+    	<td><input type="submit" name="addbtn" class="btn btn-primary" value="<t9n>[RU]Создать форму[EN]Create a form</t9n>"></td>
+    </tr>
+    </table>
+</form>
+</div>
+<br/><p><a href="#" onclick="toggle();"><t9n>[RU]Скрыть список форм[EN]Hide the forms list</t9n></a></p>
+</div>
+</div>
+<script>
+getNFill('object/137','FormsList');
+if('{_global_.id}'=='')
+    toggle('show');
+else
+    getNFill('edit_obj/{_global_.id}','OneForm');
+var f=new Array();
+<!-- Begin:intFormFields -->
+f.push({i:{FieldID},p:{PanelID},Field:{Field},FieldAlias:"{FieldAlias}",ReportField:"{ReportField}",ReportFieldAlias:"{ReportFieldAlias}",FieldValue:"{default}"});
+<!-- End:intFormFields -->
+</script>
+<div id="OneForm" style="display:none;" class="t9n">
+<h3><t9n>[RU]Форма [EN]Form </t9n><a title="<t9n>[RU]Запустить форму[EN]Run the form</t9n>" href="/{_global_.z}/form/:id:">:val:</a> 
+    <a title="<t9n>[RU]Запустить форму в новом окне[EN]Run the form in a new tab</t9n>" href="/{_global_.z}/form/:id:" target="_blank"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/play.png"/></a>
+</h3>
+</div>
+<div id="FormPanels" style="display:none;" class="t9n">
+<div id=":id:" class="alert alert-info">
+<table width="100%">
+<tr>
+<td>
+    <form  method="post" action="/{_global_.z}/_m_save/:id:" enctype="multipart/form-data" onsubmit="savebtn.disabled=true;return true;">
+    <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+    <input type="hidden" name="next_act" value="{_global_.action}/{_global_.id}#:id:">
+	<table width="100%" style="margin-bottom:5px;">
+	<tr>
+	<td align="right"><b><t9n>[RU]Панель[EN]Panel</t9n></b>&nbsp;</td>
+	<td><input type="text" name="t138" id="p:id:" value=":val:" class="form-control" onfocus="if(im[:id:]===undefined)im[:id:]=this.value" oninput="v(:id:)"></td>
+    <td width="5%" align="center"><a href="#" onclick="post('_m_up/:id:?next_act={_global_.action}/{_global_.id}%26')" title="<t9n>[RU]Переместить панель выше[EN]Move panel up</t9n>"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/up.png"/></a></td>
+    <td width="5%" align="center"><a href="#" onclick="post('_m_del/:id:?next_act={_global_.action}/{_global_.id}%26')" title="<t9n>[RU]Удалить панель[EN]Delete the panel</t9n>"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/delete-sign.png"/></a></td>
+	</tr>
+	<tr>
+    <td align="right"><t9n>[RU]Фильтры[EN]Filters</t9n>&nbsp;</td>
+    <td align="left"><input type="text" name="t181" id="pf:id:" value=":filter:" class="form-control" placeholder="<t9n>[RU]Фильтр вида FR_* и TO_* для отчетов панели[EN]Filter in format FR_* и TO_* for panel reports</t9n>" onfocus="if(im['f:id:']===undefined)im['f:id:']=this.value" oninput="v(:id:,'f')"></td>
+    <td valign="middle" onclick="byId('filter:id:').innerHTML=byId('filter:id:').innerHTML==''?byId('filter').innerHTML:''"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/help.png"/></td>
+	</tr>
+	<tr><td colspan="2"><div id="filter:id:"></div></td></tr>
+	<tr>
+    <td align="right"><t9n>[RU]Следующее&nbsp;действие[EN]Next action</t9n>&nbsp;</td>
+    <td align="left"><input type="text" name="t257" id="pa:id:" value=":next:" class="form-control" placeholder="{_global_.action}/{_global_.id}" onfocus="if(im['a:id:']===undefined)im['a:id:']=this.value" oninput="v(:id:,'a')"></td>
+    <td valign="middle" onclick="byId('next:id:').innerHTML=byId('next:id:').innerHTML==''?byId('next').innerHTML:''"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/help.png"/></td>
+	</tr>
+	<tr><td colspan="2"><div id="next:id:"></div></td></tr>
+	</table>
+	<table style="margin-top:5px; margin-bottom:5px;width:100%">
+	<tr>
+	<td><t9n>[RU]Тип[EN]Type</t9n>:&nbsp;<b><a href="/{_global_.z}/object/:orig_type:" id=":type:">:object:</a></b></td>
+    <td><!--<input type="checkbox" name="t182" value="1" style="margin:8px" :checked:/>Редактируемое значение типа--></td>
+	</tr>
+	<tr>
+    <td><t9n>[RU]Отчет[EN]Report</t9n>:&nbsp;<b>:report:</b>&nbsp;&nbsp;</td>
+    <td>
+    	<table style="margin-top:5px; margin-bottom:5px;width:100%">
+    	<tr>
+    	<td align="right">&nbsp;&nbsp;<t9n>[RU]Цвет:&nbsp;фона[EN]Color of: background</t9n>&nbsp;</td>
+        <td align="left">
+            <input type="text" name="t255" id="pbg:id:" value=":bgcolor:" class="form-control" placeholder="white" onfocus="if(im['bg:id:']===undefined)im['bg:id:']=this.value" oninput="v(:id:,'bg')">
+        </td>
+    	<td align="right">&nbsp;&nbsp;<t9n>[RU]шрифта[EN]font</t9n>&nbsp;</td>
+        <td align="left">
+            <input type="text" name="t254" id="pcolor:id:" value=":color:" class="form-control" placeholder="#333333" onfocus="if(im['color:id:']===undefined)im['color:id:']=this.value" oninput="v(:id:,'color')">
+        </td>
+        <td valign="middle" onclick="byId('help:id:').innerHTML=byId('help:id:').innerHTML==''?byId('help').innerHTML:''"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/help.png"/></td>
+    	</tr>
+        </table>
+	</td>
+	</tr>
+	<tr>
+        <td colspan="2"><div id="help:id:"></div></td>
+	</tr>
+	<tr>
+	<td colspan="2" align="right">
+    	<div id="save_:id:" style="display:none;margin-top:5px;">
+        	<input type="submit" name="savebtn" class="btn btn-primary" title="<t9n>[RU]Сохранить изменения[EN]Save changes</t9n>" value="<t9n>[RU]Сохранить[EN]Save</t9n>">&nbsp;&nbsp;<button type="button" class="btn btn-outline-secondary" onclick="cancel(:id:)"><t9n>[RU]Отмена[EN]Cancel</t9n></button>
+        </div>
+	</td>
+	</tr>
+	</table>
+    <hr style="margin-bottom:10px;"/>
+	</form>
+</td>
+</tr>
+<tr>
+<td>
+	<table width="100%" style="margin-top:5px; margin-bottom:5px;">
+	<tr>
+	<td valign="top"><b><t9n>[RU]Кнопки[EN]Buttons</t9n></b></td>
+	</tr>
+	<tr>
+	<td>
+		<table width="100%" style="margin-bottom:5px;margin-top:5px;" id="Panel_:id:_Buttons">
+		<tr>
+		<td><input type="text" id="p:FID:" value=":FieldAlias:" class="form-control" onfocus="if(im[:FID:]===undefined)im[:FID:]=this.value" oninput="v(:FID:)" onkeyup="if(event.which==13)vb(:FID:)" placeholder="<t9n>[RU]Название[EN]Label</t9n>"></td>
+		<td><input type="text" id="pa:FID:" value=":FieldAction:" class="form-control" onfocus="if(im['a:FID:']===undefined)im['a:FID:']=this.value" oninput="v(:FID:,'a')" onkeyup="if(event.which==13)vb(:FID:)" placeholder="<t9n>[RU]Действие[EN]Action</t9n>"></td>
+		<td><input type="text" id="pc:FID:" value=":FieldClass:" class="form-control" onfocus="if(im['c:FID:']===undefined)im['c:FID:']=this.value" oninput="v(:FID:,'c')" onkeyup="if(event.which==13)vb(:FID:)" title="<t9n>[RU]Введите имя класса кнопки, оно будет записано в свойство class этой кнопки[EN]Enter the class name of the button, it will be written to the class property of this button</t9n>" placeholder="btn-outline-secondary"></td>
+		<td>
+		<div id="save_:FID:" style="display:none;">
+		    <a title="<t9n>[RU]Сохранить изменения[EN]Save changes</t9n>" onclick="vb(:FID:)"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/save.png"/></a>
+        	<a title="<t9n>[RU]Отменить[EN]Cancel</t9n>" onclick="cancel(:FID:)"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/reset.png"/></a>
+        </div>
+		<a href="#" onclick="post('_m_up/:FID:?next_act={_global_.action}/{_global_.id}%26')" title="<t9n>[RU]Переместить кнопку выше[EN]Move the button up</t9n>"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/up.png"/></a>
+		<a href="#" onclick="post('_m_del/:FID:?next_act={_global_.action}/{_global_.id}%26')" title="<t9n>[RU]Удалить кнопку[EN]Delete the button</t9n>"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/delete-sign.png"/></a>
+		</td>
+		</tr>
+		</table>
+	</td>
+	</tr>
+	<tr>
+	<td>
+		<form method="post" action="/{_global_.z}/_m_new/150?up=:id:" onsubmit="if(document.getElementById('new_btn_'+:id:).value==''){alert('<t9n>[RU]Задайте действие для кнопки![EN]Specify the button\'s action</t9n>'); event.returnValue=false;event.preventDefault();}else{addbtn.disabled=true;if(byId('btn_name:id:').value=='')byId('btn_name:id:').value=byId('new_btn_:id:').value}">
+		<input type="hidden" name="next_act" value="{_global_.action}/{_global_.id}&">			
+        <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+		<table style="margin-bottom:5px;">
+		<tr>
+		<td>&nbsp;<t9n>[RU]Добавить кнопку:[EN]Add the button</t9n>&nbsp;</td>
+		<td><input type="text" id="btn_name:id:" name="t150" placeholder="<t9n>[RU]Введите имя кнопки[EN]Enter the name</t9n>" class="form-control"></td>
+		<td><input type="text" id="new_btn_:id:" name="t171" placeholder="<t9n>[RU]Укажите действие[EN]Define the action</t9n>" class="form-control"></td>
+		<td><input type="text" name="t163" placeholder="btn-outline-secondary"  title="<t9n>[RU]Введите имя класса кнопки, оно будет записано в свойство class этой кнопки[EN]Enter the class name for the button, it will be written to the class property of this button</t9n>" class="form-control"></td>
+		<td><input type="submit" name="addbtn" class="btn btn-outline-secondary" value="<t9n>[RU]Добавить[EN]Add</t9n>"></td>
+		</tr>
+		</table>
+		</form>
+	</td>
+	</tr>
+	</table>
+	<hr style="margin-bottom:10px;"/>
+</td>
+</tr>
+<tr>
+<td>
+	<table width="100%" style="margin-top:5px; margin-bottom:5px;">
+	<tr>
+	<td valign="top"><b><t9n>[RU]Поля панели[EN]Panel fields</t9n></b></td>
+	</tr>
+	<tr>
+	<td>
+		<table width="100%" style="margin-bottom:5px;" id="Panel_:id:_Fields">
+		<tr>
+		<td align="right"><span id=":FID:"><b>:Field:</b>:ReportFieldAlias:</span>&nbsp;</td>
+		<td><input type="text" id="p:FID:" value=":FieldAlias:" class="form-control" onfocus="if(im[:FID:]===undefined)im[:FID:]=this.value"
+		            oninput="v(:FID:)" onkeyup="if(event.which==13)save('_m_save/:FID:?t186='+encodeURIComponent(this.value)+'&t258='+encodeURIComponent(byId('pa'+:FID:).value),'save_:FID:')" placeholder="<t9n>[RU]Метка для поля[EN]Label for the field</t9n>"></td>
+		<td><input type="text" id="pa:FID:" value=":FieldValue:" class="form-control" onfocus="if(im['a:FID:']===undefined)im['a:FID:']=this.value"
+		            oninput="v(:FID:,'a')" onkeyup="if(event.which==13)save('_m_save/:FID:?t186='+encodeURIComponent(byId('p'+:FID:).value)+'&t258='+encodeURIComponent(this.value),'save_:FID:')" placeholder="<t9n>[RU]Значение по умолчанию[EN]Default value</t9n>"></td>
+		<td>
+		<div id="save_:FID:" style="display:none;">
+		    <a title="<t9n>[RU]Сохранить изменения[EN]Save changes</t9n>" onclick="save('_m_save/:FID:?t186='+encodeURIComponent(byId('p:FID:').value)+'&t258='+encodeURIComponent(byId('pa'+:FID:).value),'save_:FID:')">
+	        <img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/save.png"/></a>
+        	<a title="<t9n>[RU]Отменить[EN]Cancel</t9n>" onclick="cancel(:FID:)"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/reset.png"/></a>
+        </div>
+		</td>
+		<td><a href="#" onclick="post('_m_up/:FID:?next_act={_global_.action}/{_global_.id}%26')" title="<t9n>[RU]Переместить поле выше[EN]Move the field up</t9n>"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/up.png"/></a></td>
+		<td><a href="#" onclick="post('_m_del/:FID:?next_act={_global_.action}/{_global_.id}%26')" title="<t9n>[RU]Удалить поле[EN]Delete the field</t9n>"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/delete-sign.png"/></a></td>
+		</tr>
+		</table>
+	</td>
+	</tr>
+	<tr>
+	<td>
+		<form method="post" action="/{_global_.z}/_m_new/144?up=:id:" onsubmit="addbtn.disabled = true; return true;">
+		<input type="hidden" name="next_act" value="{_global_.action}/{_global_.id}&">			
+        <input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+		<table style="margin-bottom:5px;">
+		<tr>
+		<td>&nbsp;<t9n>[RU]Добавить поле:[EN]Add a field</t9n>&nbsp;</td>
+		<td><select name="t144" id="field:id:" class="form-control"></select></td>
+		<td><input type="text" name="t186" placeholder="<t9n>[RU]Введите имя для поля[EN]Enter the field name</t9n>" class="form-control"></td>
+		<td><input type="text" id="def:id:" name="t258" placeholder="<t9n>[RU]Значение по умолчанию[EN]Default value</t9n>" class="form-control"></td>
+		<td><button type="button" class="btn btn-outline-secondary" onclick="defaults(:id:,':type:')">...</button></td>
+		<td><input type="submit" name="addbtn" class="btn btn-outline-secondary" value="<t9n>[RU]Добавить[EN]Add</t9n>"></td>
+		</tr>
+		<tr>
+		<td colspan="6"><div id="defaults_:id:"></div></td>
+		</tr>
+		</table>
+		</form>
+	</td>
+	</tr>
+	</table>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<script>
+function validate(){
+    if(byId('PanelType').value=='' && byId('PanelReport').value=='')
+        return false;
+    if(byId('PanelName').value=='')
+        byId('PanelName').value=byId('PanelType').value=='' ? byId(byId('PanelReport').value).innerHTML : byId(byId('PanelType').value).innerHTML;
+    return true;
+}
+</script>
+<div class="t9n">
+<div id="AddPanel" class="alert alert-info" style="display:none;">
+<form method="post" action="/{_global_.z}/_m_new/138?up={_global_.id}" onsubmit="if(validate())paneladd.disabled=true;else{alert('<t9n>[RU]Выберите тип или отчет[EN]Pick a Type or Report</t9n>!');event.returnValue=false;event.preventDefault();}">
+<input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+<input type="hidden" name="next_act" value="{_global_.action}/{_global_.id}&">
+<table>
+<tr>
+	<td><input placeholder="<t9n>[RU]Введите имя для новой панели[EN]Enter the new panel name</t9n>" type="text" id="PanelName" name="t138" class="form-control form-control-sm"></td>
+    <td valign="middle" onclick="byId('add_panel').innerHTML=byId('add_panel').innerHTML==''?byId('panel').innerHTML:''"><img class="icon8 p-2" src="https://img.icons8.com/ios/25/333333/help.png"/></td>
+</tr>
+<tr><td colspan="2"><div id="add_panel"></div></td>
+</tr>
+<tr>
+<td colspan="2">
+	<table style="margin-top:5px; margin-bottom:5px;">
+	<tr>
+	<td><b><t9n>[RU]Источник&nbsp;данных[EN]Data source</t9n>&nbsp;</b></td>
+	<td>&nbsp;&nbsp;<t9n>[RU]Тип[EN]Type</t9n>:</td>
+	<td>
+	<select id="PanelType" name="t184" class="form-control">
+	</select>
+	</td>
+	<td>&nbsp;&nbsp;<t9n>[RU]Отчет[EN]Report</t9n>:</td>
+	<td>
+	<select id="PanelReport" name="t161" class="form-control">
+		<option> </option>
+		<!-- Begin:intReports --><option id="{ID}" value="{ID}">{Name}</option>
+		<!-- End:intReports -->
+	</select>
+	</td>
+	</tr>
+	</table>
+</td>
+</tr>
+<tr><td align="right" colspan="2"><input type="submit" name="paneladd" class="btn btn-sm btn-outline-secondary" value="<t9n>[RU]Добавить панель[EN]Add the panel</t9n>"></td></tr>
+</table>
+</form>
+<script>
+var h='<option> </option>';
+for(i in t)
+    if(r[i]){
+        h+='<option id="'+i+'" value="'+i+'">'+t[i].v+'</option>';
+        for(j in r[i])
+            if(r[r[i][j].t])
+                h+='<option id="'+r[i][j].i+'" value="'+r[i][j].i+'">'+t[i].v+' - '+t[r[i][j].t].v+'</option>';
+    }
+byId('PanelType').innerHTML=h;
+</script>
+</div>
+<div id="defaults" style="display:none;">
+<div class="alert alert-warning" style="margin:15px">
+    <p><t9n>[RU]Вы можете использовать следующие значения по умолчанию[EN]You can use the following defaults</t9n>:</p>
+    :defaults:
+</div>
+</div>
+<div id="panel" style="display:none;">
+<div class="alert alert-warning" style="margin:15px">
+	<p><t9n>[RU]Форма состоит из одной или нескольких панелей. При добавлении панели вы выбираете тип и/или отчет, который будет отображен в панели. Если вы одновременно укажете и тип, и отчет, то данные из первой строки отчета будут отображены на форме вместе с выбранными полями типа.[EN]The form consists of one or more panels. When adding a panel, you select the type and/or report that will be displayed in the panel. If you specify both the type and the report at the same time, then the data from the first line of the report will be displayed on the form along with the selected type fields.</t9n></p>
+	<p><t9n>[RU]При выборе только типа, в панели отобразятся выбранные поля этого типа.[EN]If you select only a type, the panel displays the selected fields of that type.</t9n></p>
+	<p><t9n>[RU]Если будет указан только отчет, то в панели будут отображены выбранные из него поля. Если поля не выбраны, то он отобразится целиком.[EN]If only the report is specified, the panel will display the fields selected from it. If no fields are selected, it will be displayed in its entirety.</t9n></p>
+</div>
+</div>
+<div id="help" style="display:none;">
+<div class="alert alert-warning" style="margin:15px">
+	<t9n>[RU]Вы можете задать цвет фона и шрифта для строк отчета или для всей панели. Можно использовать значения цветов, [EN]You can set background and font colors for report lines or for the entire panel. Use any color values </t9n>
+	<a href="https://html5book.ru/css-colors/" target="_blank"><t9n>[RU]поддерживаемые в [EN]supported in HTML</t9n></a>.
+	<t9n>[RU] Если цвета заданы здесь, то они применяются ко всей панели.[EN]If colors are specified here, then they are applied to the entire panel.</t9n>
+	<br /><t9n>[RU]Также можно добавить колонки с именами color и bgcolor в назначенный этой панели отчет. Цвета, заданные в отчете, будут применены к каждой строчке отчета.
+	           [EN]You can also add columns named <i>color</i> and <i>bgcolor</i> to the report assigned to this panel. The colors specified in the report will be applied to each line of the report.</t9n>
+</div>
+</div>
+<div id="filter" style="display:none;">
+<div class="alert alert-warning" style="margin:15px">
+    <t9n>[RU]Этот фильтр будет применен при запросе отчета, заданного для этой панели, например, FR_Дата=1.1&TO_Дата=31.1 задаст фильтр для поля Дата: с 1 по 31 января текущего года.
+        [EN]This filter will be applied to the report specified for this panel, for example, FR_Date=1.1&TO_Date=31.1 will set the filter for the Date field: from January 1 to January 31 of the current year.</t9n>
+</div>
+</div>
+<div id="next" style="display:none;">
+<div class="alert alert-warning" style="margin:15px">
+	<t9n>[RU]По умолчанию после отправки формы управление передается обратно этой же форме.
+        	<br />Адрес {_global_.action}/{_global_.id}&nbsp;&mdash; имя этого обработчика формы и её id ({_global_.id}).
+        	<br />Здесь вы можете задать другое действие или форму, а также передать им параметры.
+	    [EN]By default, after submitting a form, control is passed back to the same form.
+        	<br />The address of {_global_.action}/{_global_.id} is the name of this form handler and its id ({_global_.id}).
+        	<br />Here you can define another action or form, as well as pass parameters to them.
+	    </t9n>
+</div>
+</div>
+</div>
+<form id="sb" method="post" action="/{_global_.z}/_m_save/" enctype="multipart/form-data">
+<input type="hidden" name="_xsrf" value="{_global_.xsrf}">
+<input type="hidden" name="next_act" value="{_global_.action}/{_global_.id}">
+<input type="hidden" id="t150" name="t150" value="">
+<input type="hidden" id="t171" name="t171" value="">
+<input type="hidden" id="t163" name="t163" value="">
+</form>
