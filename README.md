@@ -14,13 +14,15 @@ The application consists of the following parts:
  - An SQL-script to create a DB and table (MySQL)
 
 #### Deployment
-1. Create a MySQL db along with one table, using the script named sber.sql
-2. Copy the rest into you server and configure your PHP
-   - I use Apache, so there are .htaccess files to secure the folders and redirect the calls
+1. Create a MySQL db along with one table, using the script named `sber.sql`
+2. Copy the rest of the files into you server http root folder and configure your PHP
+   - I use Apache, so there are `.htaccess` files to secure the folders and redirect the calls
    - In case you don't use Apache, make sure you got this done:
      - Secure the folders `include`, `logs`, `templates` to restrict access from outside
      - Rout all 404 to `index.php` to support friendly URLs
 3. Go to `yourhost`/`sber` and you'll be logged in as guest user though with admin's rights
+
+#### How could you index half-billion of data by every fields out of 50+?
 
 The project implements the **Quintet data model approach**: it stores your data as a list of indexed and linked values.
 
