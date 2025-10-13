@@ -1,8 +1,10 @@
 <?php
 # Get the Object's ID value and Type
-$result = Exec_sql("SELECT a.val, a.t typ, a.up, a.ord, typs.t, tail.up tail
-					FROM $z typs, $z a LEFT JOIN $z tail ON tail.up=a.id AND tail.t=0 WHERE typs.id=a.t AND a.id=$id"
-				, "Get current Val and Type");
+// Use prepared statement to prevent SQL injection
+$z_safe = validate_table_name($z);
+$result = Exec_sql_prepared("SELECT a.val, a.t typ, a.up, a.ord, typs.t, tail.up tail
+					FROM $z_safe typs, $z_safe a LEFT JOIN $z_safe tail ON tail.up=a.id AND tail.t=0 WHERE typs.id=a.t AND a.id=?"
+				, "i", [$id], "Get current Val and Type");
 if($row = mysqli_fetch_array($result))
 	$cur_val = $row["val"];
 else
@@ -74,11 +76,14 @@ foreach($_REQUEST as $key => $value)
 		if(strlen($_REQUEST["NEW_$t"])) # Check if we got a new Object to create for reference
 		{
 			$value = $_REQUEST["NEW_$t"];
-			if($row = mysqli_fetch_array(Exec_sql("SELECT id FROM $z WHERE val='".addslashes($_REQUEST["NEW_$t"])
-													."' AND t=".$GLOBALS["REF_typs"][$t], "Check if the Ref exists")))
+			// Use prepared statement to prevent SQL injection
+			$z_safe = validate_table_name($z);
+			$ref_typ = (int)$GLOBALS["REF_typs"][$t];
+			if($row = mysqli_fetch_array(Exec_sql_prepared("SELECT id FROM $z_safe WHERE val=? AND t=?"
+													, "si", [$_REQUEST["NEW_$t"], $ref_typ], "Check if the Ref exists")))
 				$v = $row["id"];
 			elseif(Grant_1level($GLOBALS["REF_typs"][$t]) == "WRITE")
-				$v = Insert(1, 1, $GLOBALS["REF_typs"][$t], addslashes($_REQUEST["NEW_$t"]), "Insert the new Ref Obj");
+				$v = Insert(1, 1, $GLOBALS["REF_typs"][$t], $_REQUEST["NEW_$t"], "Insert the new Ref Obj");
 			else
 				die(t9n("[RU]У вас нет прав на создание объектов этого типа (".$GLOBALS["REF_typs"][$t].").[EN]You don't have permission to create (".$GLOBALS["REF_typs"][$t].") type of object."));
 		}
