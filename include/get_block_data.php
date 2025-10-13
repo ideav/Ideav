@@ -86,7 +86,10 @@ function IsOccupied($id)
 function ResolveType($typ)
 {
 	global $z;
-	$data_set = Exec_sql("SELECT id FROM $z WHERE val='".addslashes($typ[1])."' AND up=0 AND t=".$GLOBALS["BT"][$typ[2]], "Seek Typ");
+	// Use prepared statement to prevent SQL injection
+	$z_safe = validate_table_name($z);
+	$base_typ = (int)$GLOBALS["BT"][$typ[2]];
+	$data_set = Exec_sql_prepared("SELECT id FROM $z_safe WHERE val=? AND up=0 AND t=?", "si", [$typ[1], $base_typ], "Seek Typ");
 	if($row = mysqli_fetch_array($data_set))
 	{
 	    $id = $row["id"];
