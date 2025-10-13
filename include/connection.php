@@ -1,8 +1,22 @@
 <?php
 $connection = mysqli_connect(null, "<>", "<>", "ideav", 0, "/cloudsql/idea-v:us-central1:<>") or die("Couldn't connect. ".mysqli_connect_error());
-$connection->set_charset("utf8"); 
+$connection->set_charset("utf8");
 mysqli_select_db($connection, "ideav") or die("Couldn't select database.");
-$result = mysqli_query($connection, "show tables where Tables_in_Ideav='$z'") or die("Неверное имя базы данных $z");
+// Validate table name to prevent SQL injection
+if(!preg_match('/^[a-zA-Z0-9_]+$/', $z))
+{
+	die("Неверное имя базы данных");
+}
+$stmt = mysqli_prepare($connection, "SHOW TABLES WHERE Tables_in_Ideav = ?");
+mysqli_stmt_bind_param($stmt, "s", $z);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+if(!$result || mysqli_num_rows($result) === 0)
+{
+	mysqli_stmt_close($stmt);
+	die("Неверное имя базы данных");
+}
+mysqli_stmt_close($stmt);
 
 define("ADMINHASH", "<>");
 define("SALT", "<>");
