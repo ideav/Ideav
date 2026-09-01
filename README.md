@@ -23,7 +23,7 @@ The application consists of the following parts:
      - Rout all 404 to `index.php` to support friendly URLs
 4. Go to `yourhost`/`sber` and you'll be logged in as guest user though with admin's rights
 
-#### How could you index half-billion of data by every fields out of 50+?
+#### How could you index half-billion of data by every field out of 50+?
 
 The project implements the **Quintet data model approach**: it stores your data as a list of indexed and linked values.
 
