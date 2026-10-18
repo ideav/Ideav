@@ -27,7 +27,7 @@ function mysendmail($to,$subj,$msg,$from='Integral',$replyto='support@ideav.pro'
     wlog("\nResult: ".($res ? " Ok" : " Failed")."\n=====\n");
     return $res;
 }
-#mysendmail('drynny@mail.ru','Hi','Test','Intergal','abc@tryjob.ru')
+#mysendmail('demo@example.com','Hi','Test','Intergal','abc@tryjob.ru')
 function wlog($text, $mode)
 {
     $file = fopen(LOGS_DIR.$GLOBALS["z"]."_$mode.txt", "a+");
