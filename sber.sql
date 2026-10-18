@@ -1,3 +1,6 @@
+-- SYNTHETIC DEMO DATA: names, phones, hashes and tokens below were generated
+-- for the demo and do not belong to real people or working accounts.
+--
 -- phpMyAdmin SQL Dump
 -- version 4.9.7
 -- https://www.phpmyadmin.net/
@@ -316,7 +319,7 @@ INSERT INTO `sber` (`id`, `t`, `up`, `ord`, `val`) VALUES
 (273, 272, 269, 2, ''),
 (274, 18, 1, 1, 'sber'),
 (275, 145, 274, 1, '115'),
-(276, 41, 274, 1, 'drynny@mail.ru'),
+(276, 41, 274, 1, 'demo@example.com'),
 (277, 156, 274, 1, '20211104'),
 (278, 20, 274, 1, 'e55b4746499f8cb1030a234d7d8a88857246eb02'),
 (279, 125, 274, 1, 'd303a2fa72e4d460c9304c6cc994b1ab'),

@@ -46,6 +46,10 @@ It consists of:
  - front-end templates (HTML+CSS+JS)
  - an SQL script to create the DB and table (MySQL)
 
+> **All data in this repository is synthetic demo data.** Names, phone numbers,
+> password hashes and tokens in `sber.sql` were generated for the demo
+> and do not belong to real people or working accounts.
+
 #### Deployment
 1. Create a MySQL db along with one table, using the script named `sber.sql`
 2. Grant access to a MySQL user and put the credentials into `/include/connection.php`
