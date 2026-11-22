@@ -4,8 +4,8 @@ We build **Integram** — a no-code platform that turns a spreadsheet into a rea
 linked tables, forms, roles and access rights, reports — without writing code.
 Or without even clicking through the builder: **ask an AI agent, and it builds the app for you.**
 
-- 🌍 [integram-ai.online](https://integram-ai.online) — Integram in English: upload an Excel file, get a web app, connect Claude or any MCP agent to build on it
-- 🇷🇺 [ideav.ru](https://ideav.ru) — Интеграм: российский no-code конструктор приложений и баз данных, в реестре отечественного ПО, облако или on-premise
+- 🌍 [https://ai.ideav.online/](https://ai.ideav.online) — Integram for AI transformation: data vectorization, an AI assistant, and the tools enterprise clients need
+- 🇷🇺 [ideav.ru](https://ideav.ru) — a Russian no-code builder for apps and databases, listed in the Russian software registry and available in the cloud or on-premise
 - 📊 [excel-to-app.ru](https://excel-to-app.ru) — send us your working spreadsheet and get it back as an application, demo in 45 minutes
 
 #### What makes it different
