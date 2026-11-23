@@ -5,12 +5,14 @@ function pwd_reset($u)
 	# Redirect to another host in case we have one
 	if(isset($_POST["host"]) || isset($_GET["host"]))
 		$host = isset($_POST["host"]) ? $_POST["host"] : $_GET["host"];
-	$data_set = Exec_sql("SELECT u.id, email.val, pwd.id pwd, phone.val phone, pwd.val old
-						FROM $z u LEFT JOIN $z email ON email.up=u.id AND email.t=".EMAIL
-						." LEFT JOIN $z pwd ON pwd.up=u.id AND pwd.t=".PASSWORD
-						." LEFT JOIN $z phone ON phone.up=u.id AND phone.t=".PHONE
-						." WHERE u.val='$u' AND u.t=".USER
-					, "Get user's reqs");
+	// Use prepared statement to prevent SQL injection
+	$z_safe = validate_table_name($z);
+	$data_set = Exec_sql_prepared("SELECT u.id, email.val, pwd.id pwd, phone.val phone, pwd.val old
+						FROM $z_safe u LEFT JOIN $z_safe email ON email.up=u.id AND email.t=?
+						 LEFT JOIN $z_safe pwd ON pwd.up=u.id AND pwd.t=?
+						 LEFT JOIN $z_safe phone ON phone.up=u.id AND phone.t=?
+						 WHERE u.val=? AND u.t=?"
+					, "iiisi", [EMAIL, PASSWORD, PHONE, $u, USER], "Get user's reqs");
 #print_r($GLOBALS); die();
 	if($row = mysqli_fetch_array($data_set))
 	{
@@ -65,7 +67,8 @@ function pwd_reset($u)
     	login($z, $u, $reason);
 }
 $GLOBALS["GLOBAL_VARS"]["uri"] = isset($_REQUEST["uri"]) ? htmlentities($_REQUEST["uri"]) : "/$z";
-$u = addslashes(strtolower($_REQUEST["u"]));
+// Sanitize user input - no need for addslashes, using prepared statements
+$u = strtolower($_REQUEST["u"]);
 if(isset($_REQUEST["reset"]))  # A new user wants to get the password
 	pwd_reset($u);
 if(isset($_POST["tzone"]))
@@ -78,12 +81,14 @@ if(isset($_POST["locale"]))
 
 $p = $_REQUEST["p"];
 $pwd = sha1(Salt($u, $p)); # Add some salt
-$data_set = Exec_sql("SELECT u.id, u.val, pwd.id pwd_id, pwd.val pwd, tok.id tok, act.id act, xsrf.id xsrf
-						FROM $z pwd, $z u LEFT JOIN $z act ON act.up=u.id AND act.t=".ACTIVITY
-							." LEFT JOIN $z tok ON tok.up=u.id AND tok.t=".TOKEN
-							." LEFT JOIN $z xsrf ON xsrf.up=u.id AND xsrf.t=".XSRF
-						." WHERE u.t=".USER." AND u.val='$u' AND pwd.up=u.id AND pwd.val='$pwd'"
-				, "Authenticate user");
+// Use prepared statement to prevent SQL injection
+$z_safe = validate_table_name($z);
+$data_set = Exec_sql_prepared("SELECT u.id, u.val, pwd.id pwd_id, pwd.val pwd, tok.id tok, act.id act, xsrf.id xsrf
+						FROM $z_safe pwd, $z_safe u LEFT JOIN $z_safe act ON act.up=u.id AND act.t=?
+							 LEFT JOIN $z_safe tok ON tok.up=u.id AND tok.t=?
+							 LEFT JOIN $z_safe xsrf ON xsrf.up=u.id AND xsrf.t=?
+						 WHERE u.t=? AND u.val=? AND pwd.up=u.id AND pwd.val=?"
+				, "iiisss", [ACTIVITY, TOKEN, XSRF, USER, $u, $pwd], "Authenticate user");
 if($row = mysqli_fetch_array($data_set))
 {
 	$GLOBALS["GLOBAL_VARS"]["user"] = $row["val"];

@@ -7,16 +7,19 @@ include "connection.php";
 # Check if this is a confirmation request
 if(isset($_REQUEST["c"]) && isset($_REQUEST["u"]))
 {
-	$u = strtolower(addslashes($_REQUEST["u"]));
-	if($row = mysqli_fetch_array(Exec_sql("SELECT p.id, p.val, template.val template, email.val email, t.id tid, name.val name, phone.val phone
-											FROM $z t, $z p, $z u
-											LEFT JOIN $z template ON template.up=u.id AND template.t=39
-											LEFT JOIN $z email ON email.up=u.id AND email.t=".EMAIL
-											." LEFT JOIN $z name ON name.up=u.id AND name.t=33
-											LEFT JOIN $z phone ON phone.up=u.id AND phone.t=".PHONE
-											." WHERE u.val='$u' AND u.t=".USER." AND p.up=u.id AND p.t=".PASSWORD
-												." AND t.up=u.id AND t.t=".TOKEN." AND t.val='".addslashes($_REQUEST["c"])."'"
-										, "Check user name & conf code")))
+	// Use prepared statement to prevent SQL injection
+	$u = strtolower($_REQUEST["u"]);
+	$z_safe = validate_table_name($z);
+	$c = $_REQUEST["c"];
+	if($row = mysqli_fetch_array(Exec_sql_prepared("SELECT p.id, p.val, template.val template, email.val email, t.id tid, name.val name, phone.val phone
+											FROM $z_safe t, $z_safe p, $z_safe u
+											LEFT JOIN $z_safe template ON template.up=u.id AND template.t=39
+											LEFT JOIN $z_safe email ON email.up=u.id AND email.t=?
+											 LEFT JOIN $z_safe name ON name.up=u.id AND name.t=33
+											 LEFT JOIN $z_safe phone ON phone.up=u.id AND phone.t=?
+											 WHERE u.val=? AND u.t=? AND p.up=u.id AND p.t=?
+												 AND t.up=u.id AND t.t=? AND t.val=?"
+										, "iiisiis", [EMAIL, PHONE, $u, USER, PASSWORD, TOKEN, $c], "Check user name & conf code")))
 		if($row["id"]) # User found
 		{
 			# Create the table for this new user
@@ -76,8 +79,10 @@ elseif(isset($_POST["db"]))
     # Stage one: Inform of the errors, if any, and let him try again
     if(strlen($msg))
     	dieReg($msg);
-    
-    if($row = mysqli_fetch_array(Exec_sql("SELECT 1 FROM $z WHERE val='$db' AND t=".USER, "Check user name uniquity")))
+
+    // Use prepared statement to prevent SQL injection
+    $z_safe = validate_table_name($z);
+    if($row = mysqli_fetch_array(Exec_sql_prepared("SELECT 1 FROM $z_safe WHERE val=? AND t=?", "si", [$db, USER], "Check user name uniquity")))
     	if($row[0])	# Inform of the errors, if any, and let him try again
     		dieReg("Сожалеем, но имя '$db' уже занято.");
     

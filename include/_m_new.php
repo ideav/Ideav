@@ -63,10 +63,14 @@ if($row = mysqli_fetch_array($data_set))
 		$val = Format_Val($base_typ, $val);
 	# The Type must be unique - let's check this
 	if($unique && !isset($max_val))
-		if($row = mysqli_fetch_array(Exec_sql("SELECT id FROM $z WHERE t=$id AND val='".addslashes($val)."' AND up=$up LIMIT 1", "Check Obj's uniquity")))
+	{
+		// Use prepared statement to prevent SQL injection
+		$z_safe = validate_table_name($z);
+		if($row = mysqli_fetch_array(Exec_sql_prepared("SELECT id FROM $z_safe WHERE t=? AND val=? AND up=? LIMIT 1", "isi", [$id, $val, $up], "Check Obj's uniquity")))
 			if(strlen($row[0]))
 				die("<b>".Format_Val_View($base_typ, $val)."</b> ".t9n("[RU]уже существует! Перейти к[EN]already exists. Go to")
 				    ." <a href=\"/$z/edit_obj/".$row[0]."\">".Format_Val_View($base_typ, $val)."</>");
+	}
 }
 else
 	die(t9n("[RU]Проверка типа неуспешна[EN]Type check failed"));

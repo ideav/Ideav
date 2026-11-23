@@ -30,14 +30,16 @@ switch ($a)
 	case "_d_save":
 		if($val == "")
 			my_die(t9n("[RU]Неверный тип ($val) [EN]Invalid type ($val)"));
-		if($row = mysqli_fetch_array(Exec_sql("SELECT $z.t, $z.val, $z.ord FROM $z 
-								LEFT JOIN $z dup ON dup.id!=$id AND dup.val='".addslashes($val)
-							."' AND dup.t=$t WHERE $z.id=$id AND dup.id IS NULL", "Get Object and check duplicates")))
+		// Use prepared statement to prevent SQL injection
+		$z_safe = validate_table_name($z);
+		if($row = mysqli_fetch_array(Exec_sql_prepared("SELECT $z_safe.t, $z_safe.val, $z_safe.ord FROM $z_safe
+								LEFT JOIN $z_safe dup ON dup.id!=? AND dup.val=?
+							 AND dup.t=? WHERE $z_safe.id=? AND dup.id IS NULL", "iisii", [$id, $val, $t, $id], "Get Object and check duplicates")))
 		{
 			if(($row["t"] != 0) && ($t == 0))
 				my_die(t9n("[RU]Неверный базовый тип ($t) [EN]Invalid base type ($t)"));
 			if(($row["t"] != $t) || ($row["val"] != $val) || ($row["ord"] != $unique))
-				Exec_sql("UPDATE $z SET t=$t, val='".addslashes($val)."', ord='$unique' WHERE id=$id", "Change typ");
+				Exec_sql_prepared("UPDATE $z_safe SET t=?, val=?, ord=? WHERE id=?", "issi", [$t, $val, $unique, $id], "Change typ");
 		}
 		else
 			my_die(t9n("[RU]Тип $val с базовым типом ".$GLOBALS["REV_BT"][$t]." уже существует. [EN]The $val type with the base type ". $GLOBALS ["REV_BT"][$t]. " already exists."));
@@ -64,7 +66,12 @@ switch ($a)
 				Exec_sql("UPDATE $z SET val='".implode($alias)."' WHERE id=$id", "Update alias");
 			}
 			elseif($val != "")
-				Exec_sql("UPDATE $z SET val=CONCAT(val,'".ALIAS_DEF.addslashes($val).":') WHERE id=$id", "Set alias");
+			{
+				// Use prepared statement to prevent SQL injection
+				$z_safe = validate_table_name($z);
+				$alias_val = ALIAS_DEF . $val . ":";
+				Exec_sql_prepared("UPDATE $z_safe SET val=CONCAT(val,?) WHERE id=?", "si", [$alias_val, $id], "Set alias");
+			}
 		}
 		else
 			my_die(t9n("[RU]Тип $id не найден [EN]Type $id not found"));
@@ -78,7 +85,9 @@ switch ($a)
 			my_die(t9n("[RU]Не задан базовый тип[EN]Base type is not set"));
 		if($_REQUEST["t"]=="")
 			my_die(t9n("[RU]Не задан базовый тип[EN]Base type is not set"));
-		if(!$row = mysqli_fetch_array(Exec_sql("SELECT id FROM $z WHERE val='".addslashes($val)."' AND t=$t AND id!=t", "Check Typ presence")))
+		// Use prepared statement to prevent SQL injection
+		$z_safe = validate_table_name($z);
+		if(!$row = mysqli_fetch_array(Exec_sql_prepared("SELECT id FROM $z_safe WHERE val=? AND t=? AND id!=t", "si", [$val, $t], "Check Typ presence")))
 			$obj = Insert(0, $unique, $t, $val, "Create Typ");
 		else
 			my_die(t9n("[RU]Тип $val уже существует![EN]The Type $val already exists!"));

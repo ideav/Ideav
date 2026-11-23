@@ -40,7 +40,9 @@ if($com[1] == "checkuser.php") # Check if the user exists
 		die("{\"result\":\"Incorrect name\"}");
     $z = "my";
     include "include/connection.php";
-    if($row = mysqli_fetch_array(Exec_sql("SELECT 1 FROM $z WHERE val='$db' AND t=".USER, "Check user name uniquity")))
+    // Use prepared statement to prevent SQL injection
+    $z_safe = validate_table_name($z);
+    if($row = mysqli_fetch_array(Exec_sql_prepared("SELECT 1 FROM $z_safe WHERE val=? AND t=?", "si", [$db, USER], "Check user name uniquity")))
     	if($row[0])	# Inform of the errors, if any, and let him try again
     		die("{\"result\":\"Exists\"}");
 	die("{\"result\":\"Ok\"}");
@@ -181,6 +183,61 @@ function Exec_sql($sql, $err_msg, $log=TRUE)
 	$GLOBALS["sql_time"] = $GLOBALS["sql_time"] + $time;
 
 	return $result;
+}
+# Execute SQL with prepared statement for security against SQL injection
+function Exec_sql_prepared($sql, $types, $params, $err_msg, $log=TRUE)
+{
+	global $connection, $z;
+	$time_start = microtime(TRUE);
+
+	$stmt = mysqli_prepare($connection, $sql);
+	if(!$stmt)
+	{
+		if(!isset($GLOBALS["TRACE"]))
+			die_info("Couldn't prepare statement [$err_msg] ".mysqli_error($connection)." ($sql; )");
+		print($GLOBALS);
+		die_info("Couldn't prepare statement [$err_msg] ".mysqli_error($connection)." ($sql; )");
+	}
+
+	if(!empty($types) && !empty($params))
+	{
+		mysqli_stmt_bind_param($stmt, $types, ...$params);
+	}
+
+	if(!mysqli_stmt_execute($stmt))
+	{
+		if(!isset($GLOBALS["TRACE"]))
+			die_info("Couldn't execute prepared statement [$err_msg] ".mysqli_stmt_error($stmt)." ($sql; )");
+		print($GLOBALS);
+		die_info("Couldn't execute prepared statement [$err_msg] ".mysqli_stmt_error($stmt)." ($sql; )");
+	}
+
+	$result = mysqli_stmt_get_result($stmt);
+	$time = microtime(TRUE) - $time_start;
+
+	if($log && (((strtoupper(substr($sql, 0, 6)) != "SELECT") && (strtoupper(substr($sql, 0, 4)) != "SET "))
+	            || isset($GLOBALS["TRACE_IT"])))
+	{
+		$safe_sql = $sql . " [PARAMS: " . implode(", ", $params) . "]";
+	    wlog($GLOBALS["GLOBAL_VARS"]["user"]."@".$_SERVER["REMOTE_ADDR"]."[".round($time, 4)."]$safe_sql;[$err_msg]","sql");
+	}
+	if(isset($GLOBALS["TRACE"]))
+		$GLOBALS["TRACE"] .= "[".round($time, 4)."] $sql; [$err_msg]<br>\n";
+	$GLOBALS["sqls"]++;
+	$GLOBALS["sql_time"] = $GLOBALS["sql_time"] + $time;
+
+	mysqli_stmt_close($stmt);
+	return $result;
+}
+# Validate and sanitize table name to prevent SQL injection
+function validate_table_name($table_name)
+{
+	// Only allow alphanumeric characters and underscores
+	if(!preg_match('/^[a-zA-Z0-9_]+$/', $table_name))
+	{
+		die_info("Invalid table name: " . htmlspecialchars($table_name));
+	}
+	return $table_name;
 }
 # Translation $msg format: "[RU]Текст[EN]Text[DE]Texte"
 function t9n($msg)
